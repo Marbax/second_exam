@@ -30,3 +30,13 @@
 *.exe
 *.out
 *.app
+
+
+.vscode
+SFML-2.5.1/share
+img/Metal_Gear_Solid Snake.png
+img/Metal_Slug _ Eri_Kasamoto.png
+SFML-2.5.1/lib
+sounds/MainMenuTheme(2nd).ogg
+img/Select_Screen(main).png
+img/lvl1(main).png
