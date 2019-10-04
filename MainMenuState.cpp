@@ -70,6 +70,7 @@ void MainMenuState::initMusic() noexcept(false)
 
 	music.setLoop(true);
 	music.setVolume(music_volume);
+	music.setPlayingOffset(sf::seconds(15));
 	music.play();
 }
 
@@ -162,6 +163,7 @@ void MainMenuState::updateButtons()
 		this->endState();
 	}
 }
+
 void MainMenuState::updateView()
 {
 	this->window->setView(view);
