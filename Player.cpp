@@ -3,7 +3,8 @@
 Player::Player(float posX, float posY, sf::Image &image, sf::String name) : Entity(posX, posY, image, name)
 {
     playerScore = attacking = 0;
-    state = stay_right;
+    state = jump_top;
+    onGround = false;
     if (name == "Tarma")
     {
         setEntitySpriteCoords(0, 618, 0, 582);
@@ -13,6 +14,17 @@ Player::Player(float posX, float posY, sf::Image &image, sf::String name) : Enti
         //spriteTop.setOrigin(entityW/2, top_entityH/2); // установка середины обьекта
         spriteTop.setTextureRect(sf::IntRect(top_sprite_posX, top_sprite_posY, entityW, top_entityH));
     }
+}
+
+void Player::setOnGround(bool b) { onGround = b; }
+
+bool Player::isOnGround() const { return onGround; }
+
+sf::FloatRect Player::getRect()
+{
+    sf::FloatRect tmp = sprite.getGlobalBounds();
+    tmp.height += spriteTop.getGlobalBounds().height;
+    return tmp;
 }
 
 // задает позицию спрайтов
@@ -71,25 +83,25 @@ void Player::move(const float boostX, const float boostY, const float &dt)
     // прыжки (может лестницы)
     if (boostY < 0 && onGround)
     {
-        this->cur_jumpH = posY - jumpH;
+        this->cur_jumpH = jumpH;
         this->isMove = true;
         this->onGround = false;
         this->sitting = false;
         if (life && state == moving_left)
         {
-            this->posX += boostX * dt;
-            this->posY += boostY * dt;
+            //this->posX += boostX * dt;
+            //this->posY += boostY * dt;
             this->state = jump_right;
         }
-        if (life && state == moving_right)
+        else if (life && state == moving_right)
         {
-            this->posX += boostX * dt;
-            this->posY += boostY * dt;
+            //this->posX += boostX * dt;
+            //this->posY += boostY * dt;
             this->state = jump_left;
         }
-        if (life && (state != moving_right || state != moving_left))
+        else if (life && (state != moving_right || state != moving_left))
         {
-            this->posY += boostY * dt;
+            //this->posY += boostY * dt;
             this->state = jump_top;
         }
     }
@@ -115,21 +127,42 @@ void Player::updateJumps(const float &dt)
 {
 
     // падение вниз
-    if (!onGround && posY < 170)
+    if (!onGround)
     {
-        if (state == jump_right)
+        if (cur_jumpH > 0)
         {
-            this->posY += 0.1f * dt;
-            this->posX += 0.1f * dt;
+            if (state == jump_right)
+            {
+                this->posX -= jump_speed * dt;
+                this->posY -= jump_speed * dt;
+            }
+            else if (state == jump_left)
+            {
+                this->posX += jump_speed * dt;
+                this->posY -= jump_speed * dt;
+            }
+            else if (state == jump_top)
+            {
+                this->posY -= jump_speed * dt;
+            }
+            this->cur_jumpH -= jump_speed * dt;
         }
-        if (state == jump_left)
+        if (cur_jumpH <= 0)
         {
-            this->posY += 0.1f * dt;
-            this->posX -= 0.1f * dt;
-        }
-        if (state == jump_top)
-        {
-            this->posY += 0.1f * dt;
+            if (state == jump_right)
+            {
+                this->posX -= jump_speed * dt;
+                this->posY += jump_speed * dt;
+            }
+            else if (state == jump_left)
+            {
+                this->posX += jump_speed * dt;
+                this->posY += jump_speed * dt;
+            }
+            else if (state == jump_top)
+            {
+                this->posY += jump_speed * dt;
+            }
         }
     }
     else
@@ -198,6 +231,7 @@ void Player::atack()
         }
     } 
 */
+
 /*
  void checkCollisionWithMap(float tmp_boostX, float tmp_boostY)
     {   
@@ -299,7 +333,7 @@ void Player::updateAnimation(const float &dt)
             spriteTop.setTextureRect(sf::IntRect(41 * int(CurrentFrame), 423, 41, 24));
             sprite.setTextureRect(sf::IntRect(41 * int(CurrentFrame), 447, 41, 23)); */
 
-        CurrentFrame += anim_speed/3 * dt;
+        CurrentFrame += anim_speed / 3 * dt;
         if (CurrentFrame > 4)
             CurrentFrame = 0;
         this->spriteTop.setTextureRect(sf::IntRect(39 * int(CurrentFrame), 644, 39, 19));
@@ -352,7 +386,7 @@ void Player::updateAnimation(const float &dt)
         } */
 
     // анимация стояния после движений и прыжков
-    if (!isMove )
+    if (!isMove)
     {
         //this->sitting = false;
         if (onGround && life && (state == moving_right || state == stay_right || state == jump_right || state == jump_top))

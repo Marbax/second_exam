@@ -9,6 +9,7 @@ private:
 	Player *player = nullptr;
 	sf::Texture tBkg;
 	sf::Sprite sBkg;
+	std::vector<sf::FloatRect> terrain;
 
 	void initVariables() noexcept(true);
 	// настройка клавиш
@@ -27,6 +28,7 @@ private:
 public:
 	GameState(sf::RenderWindow *window, std::map<std::string, int> *supportedKeys, std::stack<State *> *states);
 	virtual ~GameState();
+	void checkCollisions(const float &dt);
 	void updateView() override;
 	void updateInput(const float &dt) override;
 	void update(const float &dt) override;

@@ -21,7 +21,7 @@ private:
     } state;
 
     int playerScore, health = 100;
-    float CurrentFrame = 0.0f, anim_speed = 0.02f, jumpH = 12.0f, cur_jumpH = 0.0f;
+    float CurrentFrame = 0.0f, anim_speed = 0.02f, jump_speed = 0.3f, jumpH = 22.0f, cur_jumpH = 0.0f;
     bool attacking = false;
 
 public:
@@ -30,11 +30,17 @@ public:
 
     Player(float posx, float posY, sf::Image &image, sf::String name);
 
+    void setOnGround(bool b);
+
+    bool isOnGround() const;
+
+    sf::FloatRect getRect();
+
     // передвижение спрайта(текстуры)
     void setPosition() override;
 
     // задает координаты спрайта(x , y)
-    void setEntitySpriteCoords(int sprite_posX, int sprite_posY,int top_sprite_posX, int top_sprite_posY);
+    void setEntitySpriteCoords(int sprite_posX, int sprite_posY, int top_sprite_posX, int top_sprite_posY);
 
     // задает размер спрайтов(низ_ширина,низ_высота,верх_высота)
     void setEntitySpriteSize(int entity_width, int entity_height, int top_entity_height);
@@ -42,7 +48,7 @@ public:
     // движение обьекта(координаты) и смена состояний
     void move(const float boostX, const float boostY, const float &dt) override;
 
-    // попытка реализации "плавных" прыжков ,через падение вверх (НЕ РЕАЛИЗОВАНО)
+    // кое-какие прыжки
     void updateJumps(const float &dt);
 
     // включение атаки (состояние)

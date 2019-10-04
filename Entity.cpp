@@ -5,9 +5,11 @@ Entity::Entity(float posX, float posY, sf::Image &image, sf::String name) : posX
     texture.loadFromImage(image);
     texture.setSmooth(true);
     sprite.setTexture(texture);
-    sprite.setOrigin(static_cast<int>(entityW / 2), static_cast<int>(entityH / 2)); // установка середины обьекта как точки его начала ,а не верхнего левого угла
+    sprite.setOrigin(static_cast<int>(entityW / 2), static_cast<int>(entityH /2)); // установка середины обьекта как точки его начала ,а не верхнего левого угла
 }
 
+void Entity::setPosX(float posX) { this->posX = posX; }
+void Entity::setPosY(float posY) { this->posY = posY; }
 float Entity::getPosX() const { return this->posX; }
 float Entity::getPosY() const { return this->posY; }
 

@@ -18,6 +18,7 @@ private:
 
 	void initVariables() noexcept(true);
 	void initBackground();
+	// инициализация шрифта
 	void initFonts();
 	void initKeybinds() override;
 	// загрузка из файла строк ,перевод их в sf::Text настройка и позиционирование
@@ -30,13 +31,14 @@ public:
 	CredentialsState(sf::RenderWindow *window, std::map<std::string, int> *supportedKeys, std::stack<State *> *states);
 	virtual ~CredentialsState();
 
+	// делает плывущий текст
 	void textFlow();
-
 	// середина экрана по X
 	float getMiddleX() const;
 	void updateInput(const float &dt) override;
 	void updateView() override;
 	void update(const float &dt) override;
+	// отрисовует текст только в определенном промежутке
 	void renderThx(sf::RenderTarget *target);
 	void render(sf::RenderTarget *target) override;
 };

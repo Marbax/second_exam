@@ -30,7 +30,7 @@ void GameState::initImages() noexcept(false)
 {
 	if (!this->images["TARMA_TEXTURE"].loadFromFile(R"(./img/Guls_latem_Tarma.png)"))
 		throw std::system_error(errno, std::system_category(), "Failed to open ./img/Guls_latem_Tarma.png");
-	images["TARMA_TEXTURE"].createMaskFromColor(sf::Color(86, 177, 222)); // убираем фон спрайту
+	//images["TARMA_TEXTURE"].createMaskFromColor(sf::Color(86, 177, 222)); // убираем фон спрайту
 
 	if (!this->images["BKG_LVL1"].loadFromFile(R"(./img/bkg_lvl1.png)"))
 		throw std::system_error(errno, std::system_category(), "Failed to open ./img/bkg_lvl1.png");
@@ -38,7 +38,7 @@ void GameState::initImages() noexcept(false)
 
 void GameState::initPlayers() noexcept(false)
 {
-	this->player = new Player(0.0f, 170.0f, this->images.at("TARMA_TEXTURE"), "Tarma");
+	this->player = new Player(terrain.at(0).left, 50, this->images.at("TARMA_TEXTURE"), "Tarma");
 	if (!player)
 		throw std::logic_error("Player wasn't created !");
 }
@@ -49,6 +49,13 @@ void GameState::initLvl() noexcept(false)
 		throw std::logic_error("Can't load texture From Image !");
 	this->tBkg.setSmooth(true);
 	this->sBkg.setTexture(tBkg, true);
+
+	// загрузка обьектов карты
+	terrain.push_back(sf::FloatRect(2259.f, 220.f, 1565.f, 20.f));
+
+	terrain.push_back(sf::FloatRect(2250.f, 0.f, 20.f, 240.f));
+
+	terrain.push_back(sf::FloatRect(3814.f, 0.f, 20.f, 240.f));
 }
 
 void GameState::initMusic() noexcept(false)
@@ -105,6 +112,40 @@ GameState::~GameState()
 //---------------------------------------------------------------------------------------------------
 //--------------------------------------------Methods------------------------------------------------
 //---------------------------------------------------------------------------------------------------
+
+void GameState::checkCollisions(const float &dt)
+{
+	for (size_t i = 0; i < terrain.size(); i++)
+	{
+		if (this->player->getRect().intersects(this->terrain[i]))
+		{
+			if ((this->player->getPosY() >= this->terrain[i].top - this->terrain[i].height) && (this->player->getPosY() <= this->terrain[i].top - this->terrain[i].height * 0.5f))
+			{
+				this->player->setOnGround(true);
+				this->player->setPosY(this->terrain[i].top - this->terrain[i].height - 20);
+				std::cout << "\nINTERSECTS top "
+						  << "\nposX= " << this->player->getPosX() << " posY= " << this->player->getPosY() << std::endl;
+			}
+			if ((this->player->getPosX() <= this->terrain[i].left) && (this->player->getPosX() >= this->terrain[i].left - this->terrain[i].width * 0.5f))
+			{
+				this->player->setPosX(this->terrain[i].left);
+				std::cout << "\nINTERSECTS right "
+						  << "\nposX= " << this->player->getPosX() << " posY= " << this->player->getPosY() << std::endl;
+			}
+			if ((this->player->getPosX() >= this->terrain[i].left - this->terrain[i].width) && (this->player->getPosX() <= this->terrain[i].left - this->terrain[i].width * 0.5f))
+			{
+				this->player->setPosX(this->terrain[i].left - this->terrain[i].width);
+				std::cout << "\nINTERSECTS left "
+						  << "\nposX= " << this->player->getPosX() << " posY= " << this->player->getPosY() << std::endl;
+			}
+		}
+		//if (!this->player->getRect().intersects(this->terrain[i]))
+		//{
+		//	this->player->setOnGround(false);
+		//	std::cout << "\nNOT INTERSECTS " << this->terrain[i].top << std::endl;
+		//}
+	}
+}
 
 void GameState::updateView()
 {
@@ -178,11 +219,13 @@ void GameState::update(const float &dt)
 {
 	this->updateMousePositions();
 	this->updateInput(dt);
+	this->checkCollisions(dt);
 	this->updateMusic();
 
 	this->player->update(dt);
 	this->updateView();
-	//std::cout << "\nposX= " << this->player->getPosX() << " posY= " << this->player->getPosY() << std::endl;
+
+	//std::cout << dt << "\nposX= " << this->player->getPosX() << " posY= " << this->player->getPosY() << std::endl;
 }
 
 void GameState::render(sf::RenderTarget *target)
