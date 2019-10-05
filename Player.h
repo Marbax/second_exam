@@ -56,8 +56,6 @@ public:
 
     // void control(const float &dt);
 
-    // void checkCollisionWithMap(float tmp_boostX, float tmp_boostY);
-
     // обновление анимации
     void updateAnimation(const float &dt);
 
@@ -67,72 +65,7 @@ public:
     // отрисовка спрайтов
     void render(sf::RenderTarget *target) override;
 
-    //------------------------------------------------------------------------------------------------------------
-    //---------------------------------------nice ideas-----------------------------------------------------------
-    //------------------------------------------------------------------------------------------------------------
 
-    /* void Player::updateAnimation(const float &dt)
-    {
-        if (this->attacking)
-        {
-            //Set origin depending on direction
-            if (this->sprite.getScale().x > 0.f) //Facing left
-            {
-                this->sprite.setOrigin(96.f, 0.f);
-            }
-            else //Facing right
-            {
-                this->sprite.setOrigin(258.f + 96.f, 0.f);
-            }
-
-            //Animate and check for animation end
-            if (this->animationComponent->play("ATTACK", dt, true))
-            {
-                this->attacking = false;
-
-                if (this->sprite.getScale().x > 0.f) //Facing left
-                {
-                    this->sprite.setOrigin(0.f, 0.f);
-                }
-                else //Facing right
-                {
-                    this->sprite.setOrigin(258.f, 0.f);
-                }
-            }
-        }
-        if (this->movementComponent->getState(IDLE))
-        {
-            this->animationComponent->play("IDLE", dt);
-        }
-        else if (this->movementComponent->getState(MOVING_LEFT))
-        {
-            if (this->sprite.getScale().x < 0.f)
-            {
-                this->sprite.setOrigin(0.f, 0.f);
-                this->sprite.setScale(1.f, 1.f);
-            }
-
-            this->animationComponent->play("WALK", dt, this->movementComponent->getVelocity().x, this->movementComponent->getMaxVelocity());
-        }
-        else if (this->movementComponent->getState(MOVING_RIGHT))
-        {
-            if (this->sprite.getScale().x > 0.f)
-            {
-                this->sprite.setOrigin(258.f, 0.f);
-                this->sprite.setScale(-1.f, 1.f);
-            }
-
-            this->animationComponent->play("WALK", dt, this->movementComponent->getVelocity().x, this->movementComponent->getMaxVelocity());
-        }
-        else if (this->movementComponent->getState(MOVING_UP))
-        {
-            this->animationComponent->play("WALK", dt, this->movementComponent->getVelocity().y, this->movementComponent->getMaxVelocity());
-        }
-        else if (this->movementComponent->getState(MOVING_DOWN))
-        {
-            this->animationComponent->play("WALK", dt, this->movementComponent->getVelocity().y, this->movementComponent->getMaxVelocity());
-        }
-    } */
 };
 
 #endif

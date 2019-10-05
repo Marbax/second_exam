@@ -8,7 +8,7 @@ void MainMenuState::initVariables() noexcept(true)
 {
 	this->btn_w = 250.f;
 	this->btn_h = 50.f;
-	music_volume = 10;
+	music_volume = 30;
 }
 
 void MainMenuState::initBackground() noexcept(false)
@@ -70,7 +70,7 @@ void MainMenuState::initMusic() noexcept(false)
 
 	music.setLoop(true);
 	music.setVolume(music_volume);
-	music.setPlayingOffset(sf::seconds(15));
+	music.setPlayingOffset(sf::seconds(5));
 	music.play();
 }
 

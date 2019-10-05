@@ -30,7 +30,9 @@ void GameState::initImages() noexcept(false)
 {
 	if (!this->images["TARMA_TEXTURE"].loadFromFile(R"(./img/Guls_latem_Tarma.png)"))
 		throw std::system_error(errno, std::system_category(), "Failed to open ./img/Guls_latem_Tarma.png");
-	//images["TARMA_TEXTURE"].createMaskFromColor(sf::Color(86, 177, 222)); // убираем фон спрайту
+	images["TARMA_TEXTURE"].createMaskFromColor(sf::Color(86, 177, 222)); // убираем фон спрайту
+	images["TARMA_TEXTURE"].createMaskFromColor(sf::Color(27, 73, 101));  // убираем фон спрайту
+																		  //(полоска в анимации сидения ,которую я не смог победить))
 
 	if (!this->images["BKG_LVL1"].loadFromFile(R"(./img/bkg_lvl1.png)"))
 		throw std::system_error(errno, std::system_category(), "Failed to open ./img/bkg_lvl1.png");
@@ -38,7 +40,8 @@ void GameState::initImages() noexcept(false)
 
 void GameState::initPlayers() noexcept(false)
 {
-	this->player = new Player(terrain.at(0).left, 50, this->images.at("TARMA_TEXTURE"), "Tarma");
+	// при инициализации игрока ,если он падает ,может не успеть пройти проверка колижина и он упадет в текстуры
+	this->player = new Player(this->terrain.at(0).left, this->terrain.at(0).top - this->terrain.at(0).height - 2, this->images.at("TARMA_TEXTURE"), "Tarma");
 	if (!player)
 		throw std::logic_error("Player wasn't created !");
 }
@@ -122,7 +125,7 @@ void GameState::checkCollisions(const float &dt)
 			if ((this->player->getPosY() >= this->terrain[i].top - this->terrain[i].height) && (this->player->getPosY() <= this->terrain[i].top - this->terrain[i].height * 0.5f))
 			{
 				this->player->setOnGround(true);
-				this->player->setPosY(this->terrain[i].top - this->terrain[i].height - 20);
+				this->player->setPosY(this->terrain[i].top - this->terrain[i].height - 2);
 				std::cout << "\nINTERSECTS top "
 						  << "\nposX= " << this->player->getPosX() << " posY= " << this->player->getPosY() << std::endl;
 			}
@@ -139,11 +142,6 @@ void GameState::checkCollisions(const float &dt)
 						  << "\nposX= " << this->player->getPosX() << " posY= " << this->player->getPosY() << std::endl;
 			}
 		}
-		//if (!this->player->getRect().intersects(this->terrain[i]))
-		//{
-		//	this->player->setOnGround(false);
-		//	std::cout << "\nNOT INTERSECTS " << this->terrain[i].top << std::endl;
-		//}
 	}
 }
 

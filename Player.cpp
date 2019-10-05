@@ -3,8 +3,8 @@
 Player::Player(float posX, float posY, sf::Image &image, sf::String name) : Entity(posX, posY, image, name)
 {
     playerScore = attacking = 0;
-    state = jump_top;
-    onGround = false;
+    state = stay_right;
+    onGround = true;
     if (name == "Tarma")
     {
         setEntitySpriteCoords(0, 618, 0, 582);
@@ -16,7 +16,7 @@ Player::Player(float posX, float posY, sf::Image &image, sf::String name) : Enti
     }
 }
 
-void Player::setOnGround(bool b) { onGround = b; }
+void Player::setOnGround(bool b) { this->onGround = b; }
 
 bool Player::isOnGround() const { return onGround; }
 
@@ -30,12 +30,19 @@ sf::FloatRect Player::getRect()
 // задает позицию спрайтов
 void Player::setPosition()
 {
+
     if (sitting)
     {
         this->sprite.setPosition(posX, posY);
         this->spriteTop.setPosition(posX, posY - entityH);
-        this->sprite.move(0, 6);
-        this->spriteTop.move(0, 13);
+        this->sprite.move(0, 10);
+        this->spriteTop.move(0, -2);
+    }
+    else if (state == stay_left || state == stay_right)
+    {
+        this->sprite.setPosition(posX, posY);
+        this->spriteTop.setPosition(posX, posY - entityH);
+        this->spriteTop.move(0, -2);
     }
     else
     {
@@ -89,19 +96,14 @@ void Player::move(const float boostX, const float boostY, const float &dt)
         this->sitting = false;
         if (life && state == moving_left)
         {
-            //this->posX += boostX * dt;
-            //this->posY += boostY * dt;
             this->state = jump_right;
         }
         else if (life && state == moving_right)
         {
-            //this->posX += boostX * dt;
-            //this->posY += boostY * dt;
             this->state = jump_left;
         }
         else if (life && (state != moving_right || state != moving_left))
         {
-            //this->posY += boostY * dt;
             this->state = jump_top;
         }
     }
@@ -110,15 +112,15 @@ void Player::move(const float boostX, const float boostY, const float &dt)
     if (boostY > 0)
     {
         this->isMove = true;
-        if (onGround && life && !sitting && (state == stay_left || state == moving_left || state == down_right))
+        if (onGround && life && !sitting && (state == stay_left || state == moving_left))
         {
             this->state = down_left;
-            this->posX += boostX / 4 * dt;
+            this->posX += boostX * dt * 0.33f;
         }
-        if (onGround && life && !sitting && (state == stay_right || state == moving_right || state == down_left))
+        else if (onGround && life && !sitting && (state == stay_right || state == moving_right))
         {
             this->state = down_right;
-            this->posX += boostX / 4 * dt;
+            this->posX += boostX * dt * 0.33f;
         }
     }
 }
@@ -126,9 +128,9 @@ void Player::move(const float boostX, const float boostY, const float &dt)
 void Player::updateJumps(const float &dt)
 {
 
-    // падение вниз
     if (!onGround)
     {
+        // падение вверх
         if (cur_jumpH > 0)
         {
             if (state == jump_right)
@@ -147,6 +149,7 @@ void Player::updateJumps(const float &dt)
             }
             this->cur_jumpH -= jump_speed * dt;
         }
+        // падение вниз
         if (cur_jumpH <= 0)
         {
             if (state == jump_right)
@@ -177,6 +180,7 @@ void Player::atack()
 {
     this->attacking = true;
 }
+
 /*
  void control(const float &dt)
     {
@@ -232,44 +236,6 @@ void Player::atack()
     } 
 */
 
-/*
- void checkCollisionWithMap(float tmp_boostX, float tmp_boostY)
-    {   
-                 // if ((spriteTop.getGlobalBounds()).intersects(sprite.getGlobalBounds())) // колижн детект по мануалу 
-                 {
-                     //collision
-                 }
-
-
-        for (int i = 0; i < obj.size(); i++)
-            if (getRect().intersects(obj[i].rect))
-            {
-                if (obj[i].name == "solid")
-                {
-                    if (tmp_boostY > 0)
-                    {
-                        posY = obj[i].rect.top - entityH;
-                        tmp_boostY = 0;
-                        onGround = true;
-                    }
-                    if (tmp_boostY < 0)
-                    {
-                        posY = obj[i].rect.top + obj[i].rect.height;
-                        boostY = 0;
-                    }
-                    if (tmp_boostX > 0)
-                    {
-                        posX = obj[i].rect.left - entityW;
-                    }
-                    if (tmp_boostX < 0)
-                    {
-                        posX = obj[i].rect.left + obj[i].rect.width;
-                    }
-                }
-                // else { onGround = false; }
-            }
-    } 
-*/
 void Player::updateAnimation(const float &dt)
 {
     switch (state)
@@ -290,8 +256,8 @@ void Player::updateAnimation(const float &dt)
         setEntitySpriteCoords(0, 618, 0, 582);
         setEntitySpriteSize(39, 19, 29);
         CurrentFrame += anim_speed * dt;
-        if (CurrentFrame > 12)
-            CurrentFrame -= 11;
+        if (CurrentFrame > 13)
+            CurrentFrame = 1;
         this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + entityW * static_cast<int>(CurrentFrame), top_sprite_posY, -entityW, top_entityH));
         this->sprite.setTextureRect(sf::IntRect(sprite_posX + entityW * static_cast<int>(CurrentFrame), sprite_posY, -entityW, entityH));
     }
@@ -303,9 +269,9 @@ void Player::updateAnimation(const float &dt)
             if (CurrentFrame > 4)
                 CurrentFrame = 0;
 
-            setEntitySpriteCoords(118, 873, 118, 860);
-            setEntitySpriteSize(40, 20, 13);
-            CurrentFrame += anim_speed / 7 * dt;
+            setEntitySpriteCoords(119, 880, 119, 860);
+            setEntitySpriteSize(41, 7, 20);
+            CurrentFrame += anim_speed * dt * 0.22f;
             this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + entityW * static_cast<int>(CurrentFrame), top_sprite_posY, entityW, top_entityH));
             this->sprite.setTextureRect(sf::IntRect(sprite_posX + entityW * static_cast<int>(CurrentFrame), sprite_posY, entityW, entityH));
         }
@@ -319,74 +285,67 @@ void Player::updateAnimation(const float &dt)
 
             setEntitySpriteCoords(1, 868, 1, 848);
             setEntitySpriteSize(38, 20, 20);
-            CurrentFrame += anim_speed / 3 * dt;
+            CurrentFrame += anim_speed * dt * 0.33f;
             this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + entityW * static_cast<int>(CurrentFrame), top_sprite_posY, entityW, top_entityH));
             this->sprite.setTextureRect(sf::IntRect(sprite_posX + entityW * static_cast<int>(CurrentFrame), sprite_posY, entityW, entityH));
         }
     }
     break;
+    case down_left:
+    {
+        if (sitting)
+        {
+            if (CurrentFrame > 5)
+                CurrentFrame = 1;
+
+            setEntitySpriteCoords(119, 880, 119, 860);
+            setEntitySpriteSize(40, 7, 20);
+            CurrentFrame += anim_speed * dt * 0.22f;
+        this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + entityW * static_cast<int>(CurrentFrame), top_sprite_posY, -entityW, top_entityH));
+        this->sprite.setTextureRect(sf::IntRect(sprite_posX + entityW * static_cast<int>(CurrentFrame), sprite_posY, -entityW, entityH));
+        }
+        else
+        {
+            if (CurrentFrame > 4)
+            {
+                CurrentFrame = 1;
+                sitting = true;
+            }
+
+            setEntitySpriteCoords(1, 868, 1, 848);
+            setEntitySpriteSize(38, 20, 20);
+            CurrentFrame += anim_speed * dt * 0.33f;
+        this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + entityW * static_cast<int>(CurrentFrame), top_sprite_posY, -entityW, top_entityH));
+        this->sprite.setTextureRect(sf::IntRect(sprite_posX + entityW * static_cast<int>(CurrentFrame), sprite_posY, -entityW, entityH));
+        }
+    }
+    break;
     case stay_right:
     {
-        /* CurrentFrame += anim_speed/3 * dt;
-            if (CurrentFrame > 22)
-                CurrentFrame = 0;
-            spriteTop.setTextureRect(sf::IntRect(41 * int(CurrentFrame), 423, 41, 24));
-            sprite.setTextureRect(sf::IntRect(41 * int(CurrentFrame), 447, 41, 23)); */
-
-        CurrentFrame += anim_speed / 3 * dt;
+        setEntitySpriteCoords(1, 664, 1, 644);
+        setEntitySpriteSize(38, 17, 19);
+        CurrentFrame += anim_speed * dt * 0.33f;
         if (CurrentFrame > 4)
             CurrentFrame = 0;
-        this->spriteTop.setTextureRect(sf::IntRect(39 * int(CurrentFrame), 644, 39, 19));
-        this->sprite.setTextureRect(sf::IntRect(39 * int(CurrentFrame), 664, 39, 21));
-
-        /* CurrentFrame += anim_speed / 3 * dt;
-        if (CurrentFrame > 18)
-            CurrentFrame = 0;
-        spriteTop.setTextureRect(sf::IntRect(36 * static_cast<int>(CurrentFrame) + 1, 345, 36, 33));
-        sprite.setTextureRect(sf::IntRect(714 + (21 * (static_cast<int>(CurrentFrame) / 4)), 621, 21, 18)); */
+        this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + entityW * static_cast<int>(CurrentFrame), top_sprite_posY, entityW, top_entityH));
+        this->sprite.setTextureRect(sf::IntRect(sprite_posX + entityW * static_cast<int>(CurrentFrame), sprite_posY, entityW, entityH));
     }
     break;
     case stay_left:
     {
-        /* CurrentFrame += 0.008 * dt;
-            if (CurrentFrame > 22)
-                CurrentFrame = 0;
-            spriteTop.setTextureRect(IntRect(41 * int(CurrentFrame), 423, -41, 24));
-            sprite.setTextureRect(IntRect(41 * int(CurrentFrame), 447, -41, 23)); */
-
-        CurrentFrame += anim_speed / 3 * dt;
-        if (CurrentFrame > 4)
-            CurrentFrame -= 3;
-        this->spriteTop.setTextureRect(sf::IntRect(39 * static_cast<int>(CurrentFrame), 644, -39, 19));
-        this->sprite.setTextureRect(sf::IntRect(39 * static_cast<int>(CurrentFrame), 664, -39, 21));
-
-        /* CurrentFrame += 0.005 * dt;
-            if (CurrentFrame > 18)
-                CurrentFrame = 0;
-            spriteTop.setTextureRect(IntRect(36 * int(CurrentFrame) + 1, 345, -36, 33));
-            sprite.setTextureRect(IntRect(714 + (21 * int(int(CurrentFrame) / 4)), 621, -21, 18)); */
+        setEntitySpriteCoords(1, 664, 1, 644);
+        setEntitySpriteSize(38, 17, 19);
+        CurrentFrame += anim_speed * dt * 0.33f;
+        if (CurrentFrame > 5)
+            CurrentFrame = 1;
+        this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + entityW * static_cast<int>(CurrentFrame), top_sprite_posY, -entityW, top_entityH));
+        this->sprite.setTextureRect(sf::IntRect(sprite_posX + entityW * static_cast<int>(CurrentFrame), sprite_posY, -entityW, entityH));
     }
     break;
     }
 
-    // отключает постоянное передвижение
-    /* if (state != down_right || state != down_left)
-        {
-            if (state == moving_right || state == right)
-            {
-                state = right;
-            }
-            if (state == moving_left || state == left)
-            {
-                state = left;
-            }
-        }
-        if (state == down_right || state == down_left)
-        {
-        } */
-
     // анимация стояния после движений и прыжков
-    if (!isMove)
+    if (!isMove && !sitting)
     {
         //this->sitting = false;
         if (onGround && life && (state == moving_right || state == stay_right || state == jump_right || state == jump_top))
@@ -432,72 +391,3 @@ void Player::render(sf::RenderTarget *target)
     target->draw(this->sprite);
     target->draw(this->spriteTop);
 }
-
-//------------------------------------------------------------------------------------------------------------
-//---------------------------------------nice ideas-----------------------------------------------------------
-//------------------------------------------------------------------------------------------------------------
-
-/*
- void Player::updateAnimation(const float &dt)
-    {
-        if (this->attacking)
-        {
-            //Set origin depending on direction
-            if (this->sprite.getScale().x > 0.f) //Facing left
-            {
-                this->sprite.setOrigin(96.f, 0.f);
-            }
-            else //Facing right
-            {
-                this->sprite.setOrigin(258.f + 96.f, 0.f);
-            }
-
-            //Animate and check for animation end
-            if (this->animationComponent->play("ATTACK", dt, true))
-            {
-                this->attacking = false;
-
-                if (this->sprite.getScale().x > 0.f) //Facing left
-                {
-                    this->sprite.setOrigin(0.f, 0.f);
-                }
-                else //Facing right
-                {
-                    this->sprite.setOrigin(258.f, 0.f);
-                }
-            }
-        }
-        if (this->movementComponent->getState(IDLE))
-        {
-            this->animationComponent->play("IDLE", dt);
-        }
-        else if (this->movementComponent->getState(MOVING_LEFT))
-        {
-            if (this->sprite.getScale().x < 0.f)
-            {
-                this->sprite.setOrigin(0.f, 0.f);
-                this->sprite.setScale(1.f, 1.f);
-            }
-
-            this->animationComponent->play("WALK", dt, this->movementComponent->getVelocity().x, this->movementComponent->getMaxVelocity());
-        }
-        else if (this->movementComponent->getState(MOVING_RIGHT))
-        {
-            if (this->sprite.getScale().x > 0.f)
-            {
-                this->sprite.setOrigin(258.f, 0.f);
-                this->sprite.setScale(-1.f, 1.f);
-            }
-
-            this->animationComponent->play("WALK", dt, this->movementComponent->getVelocity().x, this->movementComponent->getMaxVelocity());
-        }
-        else if (this->movementComponent->getState(MOVING_UP))
-        {
-            this->animationComponent->play("WALK", dt, this->movementComponent->getVelocity().y, this->movementComponent->getMaxVelocity());
-        }
-        else if (this->movementComponent->getState(MOVING_DOWN))
-        {
-            this->animationComponent->play("WALK", dt, this->movementComponent->getVelocity().y, this->movementComponent->getMaxVelocity());
-        }
-    } 
-*/
