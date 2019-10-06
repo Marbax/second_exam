@@ -25,7 +25,8 @@ public:
     // явное отключение конструктора по умолчанию
     Entity() = delete;
     Entity(float posX, float posY, sf::Image &image, sf::String name);
-
+    virtual ~Entity();
+    
     virtual void setPosX(float posX);
     virtual void setPosY(float posY);
     virtual float getPosX() const;

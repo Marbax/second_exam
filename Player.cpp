@@ -1,5 +1,9 @@
 #include "Player.h"
 
+//---------------------------------------------------------------------------------------------------
+//---------------------------------Constructors/Destructors------------------------------------------
+//---------------------------------------------------------------------------------------------------
+
 Player::Player(float posX, float posY, sf::Image &image, sf::String name) : Entity(posX, posY, image, name)
 {
     playerScore = attacking = 0;
@@ -20,10 +24,18 @@ void Player::setOnGround(bool b) { this->onGround = b; }
 
 bool Player::isOnGround() const { return onGround; }
 
+//---------------------------------------------------------------------------------------------------
+//--------------------------------------------Methods------------------------------------------------
+//---------------------------------------------------------------------------------------------------
+
 sf::FloatRect Player::getRect()
 {
-    sf::FloatRect tmp = sprite.getGlobalBounds();
-    tmp.height += spriteTop.getGlobalBounds().height;
+    //sf::FloatRect tmp = sprite.getGlobalBounds();
+    //tmp.height += spriteTop.getGlobalBounds().height;
+
+    // если присесть и прыгнуть можно провалиться (это фича xD)
+    sf::FloatRect tmp = spriteTop.getGlobalBounds();
+    tmp.height += (sprite.getGlobalBounds().top + sprite.getGlobalBounds().height) - (spriteTop.getGlobalBounds().top + spriteTop.getGlobalBounds().height);
     return tmp;
 }
 
@@ -301,8 +313,8 @@ void Player::updateAnimation(const float &dt)
             setEntitySpriteCoords(119, 880, 119, 860);
             setEntitySpriteSize(40, 7, 20);
             CurrentFrame += anim_speed * dt * 0.22f;
-        this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + entityW * static_cast<int>(CurrentFrame), top_sprite_posY, -entityW, top_entityH));
-        this->sprite.setTextureRect(sf::IntRect(sprite_posX + entityW * static_cast<int>(CurrentFrame), sprite_posY, -entityW, entityH));
+            this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + entityW * static_cast<int>(CurrentFrame), top_sprite_posY, -entityW, top_entityH));
+            this->sprite.setTextureRect(sf::IntRect(sprite_posX + entityW * static_cast<int>(CurrentFrame), sprite_posY, -entityW, entityH));
         }
         else
         {
@@ -315,8 +327,8 @@ void Player::updateAnimation(const float &dt)
             setEntitySpriteCoords(1, 868, 1, 848);
             setEntitySpriteSize(38, 20, 20);
             CurrentFrame += anim_speed * dt * 0.33f;
-        this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + entityW * static_cast<int>(CurrentFrame), top_sprite_posY, -entityW, top_entityH));
-        this->sprite.setTextureRect(sf::IntRect(sprite_posX + entityW * static_cast<int>(CurrentFrame), sprite_posY, -entityW, entityH));
+            this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + entityW * static_cast<int>(CurrentFrame), top_sprite_posY, -entityW, top_entityH));
+            this->sprite.setTextureRect(sf::IntRect(sprite_posX + entityW * static_cast<int>(CurrentFrame), sprite_posY, -entityW, entityH));
         }
     }
     break;

@@ -1,12 +1,21 @@
 #include "Entity.h"
 
+//---------------------------------------------------------------------------------------------------
+//---------------------------------Constructors/Destructors------------------------------------------
+//---------------------------------------------------------------------------------------------------
+
 Entity::Entity(float posX, float posY, sf::Image &image, sf::String name) : posX(posX), posY(posY), name(name)
 {
     texture.loadFromImage(image);
     texture.setSmooth(true);
     sprite.setTexture(texture);
-    sprite.setOrigin(static_cast<int>(entityW / 2), static_cast<int>(entityH /2)); // установка середины обьекта как точки его начала ,а не верхнего левого угла
+    sprite.setOrigin(static_cast<int>(entityW / 2), static_cast<int>(entityH / 2)); // установка середины обьекта как точки его начала ,а не верхнего левого угла
 }
+
+Entity::~Entity() {}
+//---------------------------------------------------------------------------------------------------
+//--------------------------------------------Methods------------------------------------------------
+//---------------------------------------------------------------------------------------------------
 
 void Entity::setPosX(float posX) { this->posX = posX; }
 void Entity::setPosY(float posY) { this->posY = posY; }
