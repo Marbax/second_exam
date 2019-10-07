@@ -8,12 +8,11 @@ class Bullet
 {
 private:
     sf::Texture texture;
-    sf::RectangleShape shape;
-    float boostX = 0.3f, boostY = 0.0f;
-    float posX = 0.0f, posY = 0.0f;
-    bool alive = true;
+    sf::RectangleShape shape;           //bullet shape
+    float boostX = 0.3f, boostY = 0.0f; //bullet speed
+    float posX = 0.0f, posY = 0.0f;     //bullet pos
+    bool alive = true;                  //bullet exists/not
 
-    unsigned short bullet_start_pos;
     unsigned short bullet_end_pos;
     enum dir
     {
@@ -22,15 +21,17 @@ private:
     } dir;
 
 public:
-    void initBulletShape();
+    //void initBulletShape();
 
-    Bullet(const unsigned short &posX, const unsigned short &posY, const std::string &direction, const unsigned short range);
+    Bullet(const unsigned short &posX, const unsigned short &posY, const std::string &direction, const unsigned short range, sf::RectangleShape &shape);
 
     ~Bullet();
 
     const bool &getAlive() const;
+    void checkAlive();
     void updateBullet(const float &dt);
-    void renderBullet(sf::RenderTarget *target);
+    void update(const float &dt);
+    void render(sf::RenderTarget *target);
 };
 
-#endif BULLET_H
+#endif

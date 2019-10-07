@@ -11,11 +11,15 @@
 class Pistol : public Weapon
 {
 private:
+    sf::Texture texture;
+    sf::RectangleShape shape;
     //std::vector<Bullet *> bullets;
     std::list<Bullet *> bullets;
     //unsigned short atk_speed;
 
 public:
+    void initBulletShape();
+
     Pistol(const unsigned short &dmg, const unsigned short &range);
     ~Pistol();
     void shootLeft(const unsigned short &posX, const unsigned short &posY);
@@ -25,4 +29,4 @@ public:
     void update(const float &dt);
 };
 
-#endif PISTOL_H
+#endif

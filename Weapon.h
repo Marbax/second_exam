@@ -21,4 +21,4 @@ public:
     virtual const unsigned short &getRange() const;
 };
 
-#endif WEAPON_H
+#endif
