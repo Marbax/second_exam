@@ -161,7 +161,7 @@ void GameState::updateInput(const float &dt)
 	// атака
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
 	{
-		player->atack();
+		player->atack(dt);
 	}
 	// выход
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(this->keybinds.at("CLOSE"))))

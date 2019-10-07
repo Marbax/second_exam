@@ -1,10 +1,12 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 #include "Entity.h"
+#include "Pistol.h"
 
 class Player : public Entity
 {
 private:
+    Weapon *weapon;
     sf::Sprite spriteTop;
     int top_entityH = 0, top_sprite_posX = 0, top_sprite_posY = 0;
     enum state
@@ -30,6 +32,8 @@ public:
 
     Player(float posx, float posY, sf::Image &image, sf::String name);
 
+    ~Player();
+
     void setOnGround(bool b);
 
     bool isOnGround() const;
@@ -53,7 +57,7 @@ public:
     void updateJumps(const float &dt);
 
     // включение атаки (состояние)
-    void atack();
+    void atack(const float &dt);
 
     // void control(const float &dt);
 
@@ -65,7 +69,6 @@ public:
 
     // отрисовка спрайтов
     void render(sf::RenderTarget *target) override;
-
 
 };
 

@@ -5,28 +5,30 @@
 #include "Bullet.h"
 #include <iostream>
 #include <list>
-#include <set>
 #include "SFML-2.5.1/include/SFML/Graphics.hpp"
+#include "SFML-2.5.1/include/SFML/Audio.hpp"
 
 class Pistol : public Weapon
 {
 private:
+    sf::SoundBuffer sound_buf;
+    sf::Sound shoot_sound;
     sf::Texture texture;
-    sf::RectangleShape shape;
-    //std::vector<Bullet *> bullets;
     std::list<Bullet *> bullets;
-    //unsigned short atk_speed;
+    float atk_speed = 500, cooldown;
 
 public:
-    void initBulletShape();
+    void initBulletTexture();
+    void initSounds();
 
     Pistol(const unsigned short &dmg, const unsigned short &range);
     ~Pistol();
-    void shootLeft(const unsigned short &posX, const unsigned short &posY);
-    void shootRight(const unsigned short &posX, const unsigned short &posY);
+    void shootLeft(const unsigned short &posX, const unsigned short &posY, const float &dt) override;
+    void shootRight(const unsigned short &posX, const unsigned short &posY, const float &dt) override;
     //void shootTop(const std::string &direction, const unsigned short &bullet_start_pos);
 
-    void update(const float &dt);
+    void update(const float &dt) override;
+    void render(sf::RenderTarget *target) override;
 };
 
 #endif

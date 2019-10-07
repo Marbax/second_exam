@@ -1,39 +1,22 @@
 #include "Bullet.h"
 
-//---------------------------------------------------------------------------------------------------
-//---------------------------------Inits_for_Cstr----------------------------------------------------
-//---------------------------------------------------------------------------------------------------
-/* 
-void Bullet::initBulletShape()
+Bullet::Bullet(const unsigned short &posX, const unsigned short &posY, const std::string &direction,
+               const unsigned short range, sf::Texture &texture) : posX(posX), posY(posY)
 {
-    if (!this->texture.loadFromFile(R"(./img/bullet.png)"))
-        throw std::system_error(errno, std::system_category(), "Failed to open ./img/bullet.png");
-    this->texture.setSmooth(true);
-    this->shape.setTexture(&texture);
-    this->shape.setOrigin(posX, posY);
-}
- */
-Bullet::Bullet(const unsigned short &posX, const unsigned short &posY, const std::string &direction, const unsigned short range, sf::RectangleShape &shape) : posX(posX), posY(posY)
-{
-    try
-    {
-        //initBulletShape();
-        shape.setOrigin(posX, posY);
 
-        if (direction == "left")
-        {
-            this->dir = left;
-            this->bullet_end_pos = posX - range;
-        }
-        else if (direction == "right")
-        {
-            this->dir = right;
-            this->bullet_end_pos = posX + range;
-        }
-    }
-    catch (const std::system_error &ex)
+    this->sprite.setTexture(texture);
+    this->sprite.setOrigin(sprite.getTextureRect().width / 2, sprite.getTextureRect().height / 2);
+
+    if (direction == "left")
     {
-        std::cerr << "Error in Bullet.cpp." << ex.what() << " (" << ex.code() << ")" << std::endl;
+        this->sprite.rotate(180);
+        this->dir = left;
+        this->bullet_end_pos = posX - range;
+    }
+    else if (direction == "right")
+    {
+        this->dir = right;
+        this->bullet_end_pos = posX + range;
     }
 }
 
@@ -58,17 +41,22 @@ void Bullet::checkAlive()
 void Bullet::updateBullet(const float &dt)
 {
     if (this->dir == left)
-        this->shape.setPosition(posX - boostX, posY);
+    {
+        this->posX -= boostX * dt;
+        this->sprite.setPosition(posX, posY);
+    }
     else if (this->dir == right)
-        this->shape.setPosition(posX + boostX, posY);
+    {
+        this->posX += boostX * dt;
+        this->sprite.setPosition(posX, posY);
+    }
 }
 
 void Bullet::update(const float &dt)
 {
+    checkAlive();
     if (alive)
     {
-        checkAlive();
-
         updateBullet(dt);
     }
 }
@@ -76,5 +64,5 @@ void Bullet::update(const float &dt)
 void Bullet::render(sf::RenderTarget *target)
 {
     if (alive)
-        target->draw(this->shape);
+        target->draw(this->sprite);
 }

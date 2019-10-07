@@ -11,6 +11,7 @@ Player::Player(float posX, float posY, sf::Image &image, sf::String name) : Enti
     onGround = true;
     if (name == "Tarma")
     {
+        this->weapon = new Pistol(20, 500);
         setEntitySpriteCoords(0, 618, 0, 582);
         setEntitySpriteSize(39, 19, 29);
         sprite.setTextureRect(sf::IntRect(sprite_posX, sprite_posY, entityW, entityH));
@@ -20,13 +21,18 @@ Player::Player(float posX, float posY, sf::Image &image, sf::String name) : Enti
     }
 }
 
-void Player::setOnGround(bool b) { this->onGround = b; }
-
-bool Player::isOnGround() const { return onGround; }
+Player::~Player()
+{
+    delete weapon;
+}
 
 //---------------------------------------------------------------------------------------------------
 //--------------------------------------------Methods------------------------------------------------
 //---------------------------------------------------------------------------------------------------
+
+void Player::setOnGround(bool b) { this->onGround = b; }
+
+bool Player::isOnGround() const { return onGround; }
 
 sf::FloatRect Player::getRect()
 {
@@ -188,9 +194,14 @@ void Player::updateJumps(const float &dt)
     }
 }
 
-void Player::atack()
+void Player::atack(const float &dt)
 {
-    this->attacking = true;
+    if (this->state == stay_left || this->state == moving_left || this->state == down_left || this->state == jump_left)
+        weapon->shootLeft(this->spriteTop.getGlobalBounds().left, this->spriteTop.getGlobalBounds().top + this->spriteTop.getGlobalBounds().height / 2, dt);
+    else if (this->state == stay_right || this->state == moving_right || this->state == down_right || this->state == jump_right)
+        weapon->shootRight(this->spriteTop.getGlobalBounds().left, this->spriteTop.getGlobalBounds().top + this->spriteTop.getGlobalBounds().height / 2, dt);
+
+    //this->attacking = true;
 }
 
 /*
@@ -377,29 +388,12 @@ void Player::update(const float &dt)
     updateJumps(dt);
     updateAnimation(dt);
     setPosition();
-
-    //checkCollisionWithMap(boostX, 0);
-    //checkCollisionWithMap(0, boostY);
-
-    // смерть
-    /* if (health <= 0)
-        {
-            life = false;
-        } */
-
-    /*         if (!isMove)
-        {
-            speed = 0;
-        }
-     */
-    /* if (life)
-        {
-            setPlayerCoordinateForView(posX, posY);
-        } */
+    this->weapon->update(dt);
 }
 
 void Player::render(sf::RenderTarget *target)
 {
     target->draw(this->sprite);
     target->draw(this->spriteTop);
+    this->weapon->render(target);
 }

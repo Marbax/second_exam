@@ -7,8 +7,7 @@
 class Bullet
 {
 private:
-    sf::Texture texture;
-    sf::RectangleShape shape;           //bullet shape
+    sf::Sprite sprite;                  //bullet sprite
     float boostX = 0.3f, boostY = 0.0f; //bullet speed
     float posX = 0.0f, posY = 0.0f;     //bullet pos
     bool alive = true;                  //bullet exists/not
@@ -21,9 +20,8 @@ private:
     } dir;
 
 public:
-    //void initBulletShape();
-
-    Bullet(const unsigned short &posX, const unsigned short &posY, const std::string &direction, const unsigned short range, sf::RectangleShape &shape);
+    Bullet(const unsigned short &posX, const unsigned short &posY, const std::string &direction,
+           const unsigned short range, sf::Texture &texture);
 
     ~Bullet();
 
