@@ -8,7 +8,7 @@ class Bullet
 {
 private:
     sf::Sprite sprite;                  //bullet sprite
-    float boostX = 0.3f, boostY = 0.0f; //bullet speed
+    float boostX = 0.7f, boostY = 0.0f; //bullet speed
     float posX = 0.0f, posY = 0.0f;     //bullet pos
     bool alive = true;                  //bullet exists/not
 
@@ -25,6 +25,8 @@ public:
 
     ~Bullet();
 
+    const sf::Vector2f &getBulletPosition() const;
+    void setAlive(const bool &alive);
     const bool &getAlive() const;
     void checkAlive();
     void updateBullet(const float &dt);

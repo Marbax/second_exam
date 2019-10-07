@@ -2,6 +2,7 @@
 #define WEAPON_H
 
 #include <iostream>
+#include <list>
 #include "SFML-2.5.1/include/SFML/Graphics.hpp"
 
 class Weapon
@@ -16,6 +17,8 @@ public:
     Weapon() = delete;
     Weapon(const std::string &name, const unsigned short &dmg, const unsigned short &range);
     virtual ~Weapon() = 0;
+
+    //virtual const std::list<Bullet::Bullet *> &getBulletList() const = 0;
 
     virtual const std::string &getName() const;
     virtual const unsigned short &getDmg() const;

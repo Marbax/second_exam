@@ -15,12 +15,14 @@ private:
     sf::Sound shoot_sound;
     sf::Texture texture;
     std::list<Bullet *> bullets;
+    sf::String sytr;
     float atk_speed = 500, cooldown;
 
 public:
     void initBulletTexture();
     void initSounds();
 
+    const std::list<Bullet*> &getBulletList() const;
     Pistol(const unsigned short &dmg, const unsigned short &range);
     ~Pistol();
     void shootLeft(const unsigned short &posX, const unsigned short &posY, const float &dt) override;

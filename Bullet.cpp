@@ -24,9 +24,14 @@ Bullet::~Bullet()
 {
 }
 
+
 //---------------------------------------------------------------------------------------------------
 //--------------------------------------------Methods------------------------------------------------
 //---------------------------------------------------------------------------------------------------
+
+const sf::Vector2f &Bullet::getBulletPosition() const { return this->sprite.getPosition(); }
+
+void Bullet::setAlive(const bool &alive) { this->alive = alive; }
 
 const bool &Bullet::getAlive() const { return this->alive; }
 

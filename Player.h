@@ -6,7 +6,8 @@
 class Player : public Entity
 {
 private:
-    Weapon *weapon;
+    // хз как сделать интерфейс для листа пуль
+    Pistol *weapon;
     sf::Sprite spriteTop;
     int top_entityH = 0, top_sprite_posX = 0, top_sprite_posY = 0;
     enum state
@@ -24,7 +25,6 @@ private:
 
     int playerScore, health = 100;
     float CurrentFrame = 0.0f, anim_speed = 0.02f, jump_speed = 0.3f, jumpH = 22.0f, cur_jumpH = 0.0f;
-    bool attacking = false;
 
 public:
     // явное отключение конструктора по умолчанию
@@ -33,6 +33,8 @@ public:
     Player(float posx, float posY, sf::Image &image, sf::String name);
 
     ~Player();
+
+    Pistol &getWeapon();
 
     void setOnGround(bool b);
 

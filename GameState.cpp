@@ -143,6 +143,13 @@ void GameState::checkCollisions(const float &dt)
 						  << "\nposX= " << this->player->getPosX() << " posY= " << this->player->getPosY() << std::endl;
 			}
 		}
+		for (const auto it : this->player->getWeapon().getBulletList())
+		{
+			if (terrain[i].contains(it->getBulletPosition()))
+			{
+				it->setAlive(false);
+			}
+		}
 	}
 }
 

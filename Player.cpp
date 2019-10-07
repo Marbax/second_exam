@@ -6,7 +6,7 @@
 
 Player::Player(float posX, float posY, sf::Image &image, sf::String name) : Entity(posX, posY, image, name)
 {
-    playerScore = attacking = 0;
+    playerScore = 0;
     state = stay_right;
     onGround = true;
     if (name == "Tarma")
@@ -29,6 +29,8 @@ Player::~Player()
 //---------------------------------------------------------------------------------------------------
 //--------------------------------------------Methods------------------------------------------------
 //---------------------------------------------------------------------------------------------------
+
+Pistol &Player::getWeapon() { return *this->weapon; }
 
 void Player::setOnGround(bool b) { this->onGround = b; }
 
@@ -106,7 +108,7 @@ void Player::move(const float boostX, const float boostY, const float &dt)
     }
 
     // прыжки (может лестницы)
-    if (boostY < 0 && onGround)
+    if (boostY < 0 && onGround && !sitting)
     {
         this->cur_jumpH = jumpH;
         this->isMove = true;
@@ -114,11 +116,11 @@ void Player::move(const float boostX, const float boostY, const float &dt)
         this->sitting = false;
         if (life && state == moving_left)
         {
-            this->state = jump_right;
+            this->state = jump_left;
         }
         else if (life && state == moving_right)
         {
-            this->state = jump_left;
+            this->state = jump_right;
         }
         else if (life && (state != moving_right || state != moving_left))
         {
@@ -151,12 +153,12 @@ void Player::updateJumps(const float &dt)
         // падение вверх
         if (cur_jumpH > 0)
         {
-            if (state == jump_right)
+            if (state == jump_left)
             {
                 this->posX -= jump_speed * dt;
                 this->posY -= jump_speed * dt;
             }
-            else if (state == jump_left)
+            else if (state == jump_right)
             {
                 this->posX += jump_speed * dt;
                 this->posY -= jump_speed * dt;
@@ -170,12 +172,12 @@ void Player::updateJumps(const float &dt)
         // падение вниз
         if (cur_jumpH <= 0)
         {
-            if (state == jump_right)
+            if (state == jump_left)
             {
                 this->posX -= jump_speed * dt;
                 this->posY += jump_speed * dt;
             }
-            else if (state == jump_left)
+            else if (state == jump_right)
             {
                 this->posX += jump_speed * dt;
                 this->posY += jump_speed * dt;
@@ -197,11 +199,9 @@ void Player::updateJumps(const float &dt)
 void Player::atack(const float &dt)
 {
     if (this->state == stay_left || this->state == moving_left || this->state == down_left || this->state == jump_left)
-        weapon->shootLeft(this->spriteTop.getGlobalBounds().left, this->spriteTop.getGlobalBounds().top + this->spriteTop.getGlobalBounds().height / 2, dt);
+        weapon->shootLeft(this->spriteTop.getGlobalBounds().left, this->spriteTop.getGlobalBounds().top + this->spriteTop.getGlobalBounds().height * 0.75f, dt);
     else if (this->state == stay_right || this->state == moving_right || this->state == down_right || this->state == jump_right)
-        weapon->shootRight(this->spriteTop.getGlobalBounds().left, this->spriteTop.getGlobalBounds().top + this->spriteTop.getGlobalBounds().height / 2, dt);
-
-    //this->attacking = true;
+        weapon->shootRight(this->spriteTop.getGlobalBounds().left + this->spriteTop.getGlobalBounds().width, this->spriteTop.getGlobalBounds().top + this->spriteTop.getGlobalBounds().height * 0.75f, dt);
 }
 
 /*
@@ -384,6 +384,12 @@ void Player::updateAnimation(const float &dt)
 
 void Player::update(const float &dt)
 {
+    /* 
+    for (const auto it : weapon->getBulletList())
+    {
+        std::cout << it->getBulletPosition().x << " " << it->getBulletPosition().y << std::endl;
+    }
+ */
     //control(dt);
     updateJumps(dt);
     updateAnimation(dt);
