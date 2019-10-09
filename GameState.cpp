@@ -127,20 +127,14 @@ void GameState::checkCollisions(const float &dt)
 			{
 				this->player->setOnGround(true);
 				this->player->setPosY(this->terrain[i].top - this->terrain[i].height - 2);
-				std::cout << "\nINTERSECTS top "
-						  << "\nposX= " << this->player->getPosX() << " posY= " << this->player->getPosY() << std::endl;
 			}
 			if ((this->player->getPosX() <= this->terrain[i].left) && (this->player->getPosX() >= this->terrain[i].left - this->terrain[i].width * 0.5f))
 			{
 				this->player->setPosX(this->terrain[i].left);
-				std::cout << "\nINTERSECTS right "
-						  << "\nposX= " << this->player->getPosX() << " posY= " << this->player->getPosY() << std::endl;
 			}
 			if ((this->player->getPosX() >= this->terrain[i].left - this->terrain[i].width) && (this->player->getPosX() <= this->terrain[i].left - this->terrain[i].width * 0.5f))
 			{
 				this->player->setPosX(this->terrain[i].left - this->terrain[i].width);
-				std::cout << "\nINTERSECTS left "
-						  << "\nposX= " << this->player->getPosX() << " posY= " << this->player->getPosY() << std::endl;
 			}
 		}
 		for (const auto it : this->player->getWeapon().getBulletList())

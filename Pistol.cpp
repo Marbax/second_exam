@@ -54,28 +54,35 @@ Pistol::~Pistol()
 //--------------------------------------------Methods------------------------------------------------
 //---------------------------------------------------------------------------------------------------
 
-const std::list<Bullet*> &Pistol::getBulletList() const { return this->bullets; }
+const std::list<Bullet *> &Pistol::getBulletList() const { return this->bullets; }
 
-void Pistol::shootLeft(const unsigned short &posX, const unsigned short &posY, const float &dt)
+bool Pistol::shootLeft(const unsigned short &posX, const unsigned short &posY, const float &dt)
 {
     if (cooldown <= 0)
     {
         shoot_sound.play();
         bullets.push_back(new Bullet(posX, posY, "left", this->getRange(), texture));
         cooldown = atk_speed;
+        return true;
     }
+    else
+        return false;
 }
 
-void Pistol::shootRight(const unsigned short &posX, const unsigned short &posY, const float &dt)
+bool Pistol::shootRight(const unsigned short &posX, const unsigned short &posY, const float &dt)
 {
     if (cooldown <= 0)
     {
         shoot_sound.play();
         bullets.push_back(new Bullet(posX, posY, "right", this->getRange(), texture));
         cooldown = atk_speed;
+        return true;
     }
+    else
+        return false;
 }
 
+// скорее всего течет память
 void Pistol::update(const float &dt)
 {
     if (cooldown > 0)

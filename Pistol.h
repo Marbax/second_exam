@@ -15,20 +15,20 @@ private:
     sf::Sound shoot_sound;
     sf::Texture texture;
     std::list<Bullet *> bullets;
-    sf::String sytr;
     float atk_speed = 500, cooldown;
 
 public:
     void initBulletTexture();
     void initSounds();
 
-    const std::list<Bullet*> &getBulletList() const;
+    const std::list<Bullet *> &getBulletList() const;
     Pistol(const unsigned short &dmg, const unsigned short &range);
     ~Pistol();
-    void shootLeft(const unsigned short &posX, const unsigned short &posY, const float &dt) override;
-    void shootRight(const unsigned short &posX, const unsigned short &posY, const float &dt) override;
+    bool shootLeft(const unsigned short &posX, const unsigned short &posY, const float &dt) override;
+    bool shootRight(const unsigned short &posX, const unsigned short &posY, const float &dt) override;
     //void shootTop(const std::string &direction, const unsigned short &bullet_start_pos);
 
+    // скорее всего течет память
     void update(const float &dt) override;
     void render(sf::RenderTarget *target) override;
 };

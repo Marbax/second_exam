@@ -4,12 +4,12 @@
 //---------------------------------Constructors/Destructors------------------------------------------
 //---------------------------------------------------------------------------------------------------
 
-Entity::Entity(float posX, float posY, sf::Image &image, sf::String name) : posX(posX), posY(posY), name(name)
+Entity::Entity(const float &posX, const float &posY, sf::Image &image, sf::String name) : posX(posX), posY(posY), name(name)
 {
     texture.loadFromImage(image);
     texture.setSmooth(true);
     sprite.setTexture(texture);
-    sprite.setOrigin(static_cast<int>(entityW / 2), static_cast<int>(entityH / 2)); // установка середины обьекта как точки его начала ,а не верхнего левого угла
+    sprite.setOrigin(static_cast<int>(spriteW / 2), static_cast<int>(spriteH / 2)); // установка середины обьекта как точки его начала ,а не верхнего левого угла
 }
 
 Entity::~Entity() {}
@@ -17,12 +17,12 @@ Entity::~Entity() {}
 //--------------------------------------------Methods------------------------------------------------
 //---------------------------------------------------------------------------------------------------
 
-void Entity::setPosX(float posX) { this->posX = posX; }
-void Entity::setPosY(float posY) { this->posY = posY; }
-float Entity::getPosX() const { return this->posX; }
-float Entity::getPosY() const { return this->posY; }
+void Entity::setPosX(const float &posX) { this->posX = posX; }
+void Entity::setPosY(const float &posY) { this->posY = posY; }
+const float &Entity::getPosX() const { return this->posX; }
+const float &Entity::getPosY() const { return this->posY; }
 
-void Entity::setMove(bool isMove)
+void Entity::setMove(const bool &isMove)
 {
     this->isMove = isMove;
 }

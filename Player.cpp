@@ -1,40 +1,58 @@
 #include "Player.h"
 
 //---------------------------------------------------------------------------------------------------
+//---------------------------------Inits_for_Cstr----------------------------------------------------
+//---------------------------------------------------------------------------------------------------
+
+void Player::initVariables()
+{
+    this->state = stay_right;
+    this->onGround = true;
+    this->jumpH = 22.0f;
+    this->health = 100;
+    this->CurrentFrame = 0.0f;
+    this->anim_speed = 0.02f;
+    this->jump_speed = 0.3f;
+    this->jumpH = 22.0f;
+    this->cur_jumpH = 0.0f;
+    this->sit_slawer = 0.33f;
+    this->score = 0;
+    this->weapon = new Pistol(20, 500);
+}
+
+void Player::initSprite()
+{
+    setSpriteCoords(0, 618);
+    setSpriteSize(39, 19);
+    this->sprite.setTextureRect(sf::IntRect(sprite_posX, sprite_posY, spriteW, spriteH));
+    sprite.setOrigin(spriteW / 2, 0); // установка середины обьекта
+}
+
+void Player::initTopSprite()
+{
+    setTopSpriteCoords(0, 582);
+    setTopSpriteSize(39, 29);
+    spriteTop.setTexture(texture);
+    spriteTop.setOrigin(top_spriteW / 2, top_spriteH); // установка середины обьекта
+    spriteTop.setTextureRect(sf::IntRect(top_sprite_posX, top_sprite_posY, top_spriteW, top_spriteH));
+}
+
+//---------------------------------------------------------------------------------------------------
 //---------------------------------Constructors/Destructors------------------------------------------
 //---------------------------------------------------------------------------------------------------
 
-Player::Player(float posX, float posY, sf::Image &image, sf::String name) : Entity(posX, posY, image, name)
+Player::Player(const float &posX, const float &posY, sf::Image &image, sf::String name) : Character(posX, posY, image, name)
 {
-    playerScore = 0;
-    state = stay_right;
-    onGround = true;
-    if (name == "Tarma")
-    {
-        this->weapon = new Pistol(20, 500);
-        setEntitySpriteCoords(0, 618, 0, 582);
-        setEntitySpriteSize(39, 19, 29);
-        sprite.setTextureRect(sf::IntRect(sprite_posX, sprite_posY, entityW, entityH));
-        spriteTop.setTexture(texture);
-        //spriteTop.setOrigin(entityW/2, top_entityH/2); // установка середины обьекта
-        spriteTop.setTextureRect(sf::IntRect(top_sprite_posX, top_sprite_posY, entityW, top_entityH));
-    }
+    initVariables();
+    initSprite();
+    initTopSprite();
 }
 
-Player::~Player()
-{
-    delete weapon;
-}
+Player::~Player() {}
 
 //---------------------------------------------------------------------------------------------------
 //--------------------------------------------Methods------------------------------------------------
 //---------------------------------------------------------------------------------------------------
-
-Pistol &Player::getWeapon() { return *this->weapon; }
-
-void Player::setOnGround(bool b) { this->onGround = b; }
-
-bool Player::isOnGround() const { return onGround; }
 
 sf::FloatRect Player::getRect()
 {
@@ -42,8 +60,8 @@ sf::FloatRect Player::getRect()
     //tmp.height += spriteTop.getGlobalBounds().height;
 
     // если присесть и прыгнуть можно провалиться (это фича xD)
-    sf::FloatRect tmp = spriteTop.getGlobalBounds();
-    tmp.height += (sprite.getGlobalBounds().top + sprite.getGlobalBounds().height) - (spriteTop.getGlobalBounds().top + spriteTop.getGlobalBounds().height);
+    sf::FloatRect tmp = this->spriteTop.getGlobalBounds();
+    tmp.height += (this->sprite.getGlobalBounds().top + this->sprite.getGlobalBounds().height) - (this->spriteTop.getGlobalBounds().top + this->spriteTop.getGlobalBounds().height);
     return tmp;
 }
 
@@ -54,146 +72,37 @@ void Player::setPosition()
     if (sitting)
     {
         this->sprite.setPosition(posX, posY);
-        this->spriteTop.setPosition(posX, posY - entityH);
-        this->sprite.move(0, 10);
-        this->spriteTop.move(0, -2);
+        this->spriteTop.setPosition(posX, posY);
+        this->sprite.move(0.f, 12.f);
+        this->spriteTop.move(0.f, 20.f);
     }
     else if (state == stay_left || state == stay_right)
     {
         this->sprite.setPosition(posX, posY);
-        this->spriteTop.setPosition(posX, posY - entityH);
-        this->spriteTop.move(0, -2);
+        this->spriteTop.setPosition(posX, posY);
+        this->sprite.move(0.f, 2.f);
+        this->spriteTop.move(0.f, 12.f);
     }
     else
     {
         this->sprite.setPosition(posX, posY);
-        this->spriteTop.setPosition(posX, posY - entityH);
+        this->spriteTop.setPosition(posX, posY);
+        this->spriteTop.move(0.f, 10.f);
     }
 }
 
 // задает координаты спрайта(x , y)
-void Player::setEntitySpriteCoords(int sprite_posX, int sprite_posY, int top_sprite_posX, int top_sprite_posY)
+void Player::setTopSpriteCoords(const int &top_sprite_posX, const int &top_sprite_posY)
 {
-    this->sprite_posX = sprite_posX;
-    this->sprite_posY = sprite_posY;
     this->top_sprite_posX = top_sprite_posX;
     this->top_sprite_posY = top_sprite_posY;
 }
 
 // задает размер спрайтов(низ_ширина,низ_высота,верх_высота)
-void Player::setEntitySpriteSize(int entity_width, int entity_height, int top_entity_height)
+void Player::setTopSpriteSize(const int &top_sprite_width, const int &top_sprite_height)
 {
-    this->entityW = entity_width;
-    this->entityH = entity_height;
-    this->top_entityH = top_entity_height;
-}
-
-void Player::move(const float boostX, const float boostY, const float &dt)
-{
-    // движение
-    if (boostX && !boostY)
-    {
-        this->isMove = true;
-        this->sitting = false;
-        if (onGround && life && boostX < 0)
-        {
-            this->posX += boostX * dt;
-            this->state = moving_left;
-        }
-        if (onGround && life && boostX > 0)
-        {
-            this->posX += boostX * dt;
-            this->state = moving_right;
-        }
-    }
-
-    // прыжки (может лестницы)
-    if (boostY < 0 && onGround && !sitting)
-    {
-        this->cur_jumpH = jumpH;
-        this->isMove = true;
-        this->onGround = false;
-        this->sitting = false;
-        if (life && state == moving_left)
-        {
-            this->state = jump_left;
-        }
-        else if (life && state == moving_right)
-        {
-            this->state = jump_right;
-        }
-        else if (life && (state != moving_right || state != moving_left))
-        {
-            this->state = jump_top;
-        }
-    }
-
-    // приседание (может лестницы)
-    if (boostY > 0)
-    {
-        this->isMove = true;
-        if (onGround && life && !sitting && (state == stay_left || state == moving_left))
-        {
-            this->state = down_left;
-            this->posX += boostX * dt * 0.33f;
-        }
-        else if (onGround && life && !sitting && (state == stay_right || state == moving_right))
-        {
-            this->state = down_right;
-            this->posX += boostX * dt * 0.33f;
-        }
-    }
-}
-
-void Player::updateJumps(const float &dt)
-{
-
-    if (!onGround)
-    {
-        // падение вверх
-        if (cur_jumpH > 0)
-        {
-            if (state == jump_left)
-            {
-                this->posX -= jump_speed * dt;
-                this->posY -= jump_speed * dt;
-            }
-            else if (state == jump_right)
-            {
-                this->posX += jump_speed * dt;
-                this->posY -= jump_speed * dt;
-            }
-            else if (state == jump_top)
-            {
-                this->posY -= jump_speed * dt;
-            }
-            this->cur_jumpH -= jump_speed * dt;
-        }
-        // падение вниз
-        if (cur_jumpH <= 0)
-        {
-            if (state == jump_left)
-            {
-                this->posX -= jump_speed * dt;
-                this->posY += jump_speed * dt;
-            }
-            else if (state == jump_right)
-            {
-                this->posX += jump_speed * dt;
-                this->posY += jump_speed * dt;
-            }
-            else if (state == jump_top)
-            {
-                this->posY += jump_speed * dt;
-            }
-        }
-    }
-    else
-    {
-        this->cur_jumpH = 0.f;
-        this->onGround = true;
-        this->isMove = false;
-    }
+    this->top_spriteW = top_sprite_width;
+    this->top_spriteH = top_sprite_height;
 }
 
 void Player::atack(const float &dt)
@@ -204,85 +113,34 @@ void Player::atack(const float &dt)
         weapon->shootRight(this->spriteTop.getGlobalBounds().left + this->spriteTop.getGlobalBounds().width, this->spriteTop.getGlobalBounds().top + this->spriteTop.getGlobalBounds().height * 0.75f, dt);
 }
 
-/*
- void control(const float &dt)
-    {
-        if (sf::Keyboard::isKeyPressed)
-        {
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || (sf::Keyboard::isKeyPressed(sf::Keyboard::A)))
-            {
-                // вниз и влево
-                if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || (sf::Keyboard::isKeyPressed(sf::Keyboard::A))) && (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::S)))
-                    move(-0.2f, 0.2f, dt);
-                // влево
-                else
-                    move(-0.2f, 0.f, dt);
-            }
-
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || (sf::Keyboard::isKeyPressed(sf::Keyboard::D)))
-            {
-                // вниз и вправо
-                if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || (sf::Keyboard::isKeyPressed(sf::Keyboard::D))) && (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::S)))
-                    move(0.2f, 0.2f, dt);
-                // вправо
-                else
-                    move(0.2f, 0.f, dt);
-            }
-
-            // вниз
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || (sf::Keyboard::isKeyPressed(sf::Keyboard::S)))
-                move(0.f, 0.2f, dt);
-
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || (sf::Keyboard::isKeyPressed(sf::Keyboard::W)))
-            { // вверх и вправо
-                if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || (sf::Keyboard::isKeyPressed(sf::Keyboard::D))) && (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::W)))
-                    move(1.2f, -1.2f, dt);
-                // вверх и влево
-                if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || (sf::Keyboard::isKeyPressed(sf::Keyboard::A))) && (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::W)))
-                    move(-1.2f, -1.2f, dt);
-                // вверх
-                else
-                    move(0.f, -1.2f, dt);
-            }
-
-            // атака
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-            {
-                this->attacking = true;
-            }
-        }
-        else
-        {
-            // обнуление движения
-            this->isMove = false;
-        }
-    } 
-*/
-
 void Player::updateAnimation(const float &dt)
 {
     switch (state)
     {
     case moving_right:
     {
-        setEntitySpriteCoords(0, 618, 0, 582);
-        setEntitySpriteSize(39, 19, 29);
+        setSpriteCoords(0, 618);
+        setSpriteSize(39, 19);
+        setTopSpriteCoords(0, 582);
+        setTopSpriteSize(39, 29);
         CurrentFrame += anim_speed * dt;
         if (CurrentFrame > 12)
             CurrentFrame = 0;
-        this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + entityW * static_cast<int>(CurrentFrame), top_sprite_posY, entityW, top_entityH));
-        this->sprite.setTextureRect(sf::IntRect(sprite_posX + entityW * static_cast<int>(CurrentFrame), sprite_posY, entityW, entityH));
+        this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + spriteW * static_cast<int>(CurrentFrame), top_sprite_posY, spriteW, top_spriteH));
+        this->sprite.setTextureRect(sf::IntRect(sprite_posX + spriteW * static_cast<int>(CurrentFrame), sprite_posY, spriteW, spriteH));
     }
     break;
     case moving_left:
     {
-        setEntitySpriteCoords(0, 618, 0, 582);
-        setEntitySpriteSize(39, 19, 29);
+        setSpriteCoords(0, 618);
+        setSpriteSize(39, 19);
+        setTopSpriteCoords(0, 582);
+        setTopSpriteSize(39, 29);
         CurrentFrame += anim_speed * dt;
         if (CurrentFrame > 13)
             CurrentFrame = 1;
-        this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + entityW * static_cast<int>(CurrentFrame), top_sprite_posY, -entityW, top_entityH));
-        this->sprite.setTextureRect(sf::IntRect(sprite_posX + entityW * static_cast<int>(CurrentFrame), sprite_posY, -entityW, entityH));
+        this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + spriteW * static_cast<int>(CurrentFrame), top_sprite_posY, -spriteW, top_spriteH));
+        this->sprite.setTextureRect(sf::IntRect(sprite_posX + spriteW * static_cast<int>(CurrentFrame), sprite_posY, -spriteW, spriteH));
     }
     break;
     case down_right:
@@ -292,11 +150,13 @@ void Player::updateAnimation(const float &dt)
             if (CurrentFrame > 4)
                 CurrentFrame = 0;
 
-            setEntitySpriteCoords(119, 880, 119, 860);
-            setEntitySpriteSize(41, 7, 20);
+            setSpriteCoords(119, 880);
+            setSpriteSize(41, 7);
+            setTopSpriteCoords(119, 860);
+            setTopSpriteSize(41, 20);
             CurrentFrame += anim_speed * dt * 0.22f;
-            this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + entityW * static_cast<int>(CurrentFrame), top_sprite_posY, entityW, top_entityH));
-            this->sprite.setTextureRect(sf::IntRect(sprite_posX + entityW * static_cast<int>(CurrentFrame), sprite_posY, entityW, entityH));
+            this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + spriteW * static_cast<int>(CurrentFrame), top_sprite_posY, spriteW, top_spriteH));
+            this->sprite.setTextureRect(sf::IntRect(sprite_posX + spriteW * static_cast<int>(CurrentFrame), sprite_posY, spriteW, spriteH));
         }
         else
         {
@@ -306,11 +166,13 @@ void Player::updateAnimation(const float &dt)
                 sitting = true;
             }
 
-            setEntitySpriteCoords(1, 868, 1, 848);
-            setEntitySpriteSize(38, 20, 20);
+            setSpriteCoords(1, 868);
+            setSpriteSize(38, 20);
+            setTopSpriteCoords(1, 848);
+            setTopSpriteSize(38, 20);
             CurrentFrame += anim_speed * dt * 0.33f;
-            this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + entityW * static_cast<int>(CurrentFrame), top_sprite_posY, entityW, top_entityH));
-            this->sprite.setTextureRect(sf::IntRect(sprite_posX + entityW * static_cast<int>(CurrentFrame), sprite_posY, entityW, entityH));
+            this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + spriteW * static_cast<int>(CurrentFrame), top_sprite_posY, spriteW, top_spriteH));
+            this->sprite.setTextureRect(sf::IntRect(sprite_posX + spriteW * static_cast<int>(CurrentFrame), sprite_posY, spriteW, spriteH));
         }
     }
     break;
@@ -321,11 +183,13 @@ void Player::updateAnimation(const float &dt)
             if (CurrentFrame > 5)
                 CurrentFrame = 1;
 
-            setEntitySpriteCoords(119, 880, 119, 860);
-            setEntitySpriteSize(40, 7, 20);
+            setSpriteCoords(119, 880);
+            setSpriteSize(41, 7);
+            setTopSpriteCoords(119, 860);
+            setTopSpriteSize(41, 20);
             CurrentFrame += anim_speed * dt * 0.22f;
-            this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + entityW * static_cast<int>(CurrentFrame), top_sprite_posY, -entityW, top_entityH));
-            this->sprite.setTextureRect(sf::IntRect(sprite_posX + entityW * static_cast<int>(CurrentFrame), sprite_posY, -entityW, entityH));
+            this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + spriteW * static_cast<int>(CurrentFrame), top_sprite_posY, -spriteW, top_spriteH));
+            this->sprite.setTextureRect(sf::IntRect(sprite_posX + spriteW * static_cast<int>(CurrentFrame), sprite_posY, -spriteW, spriteH));
         }
         else
         {
@@ -335,34 +199,40 @@ void Player::updateAnimation(const float &dt)
                 sitting = true;
             }
 
-            setEntitySpriteCoords(1, 868, 1, 848);
-            setEntitySpriteSize(38, 20, 20);
+            setSpriteCoords(1, 868);
+            setSpriteSize(38, 20);
+            setTopSpriteCoords(1, 848);
+            setTopSpriteSize(38, 20);
             CurrentFrame += anim_speed * dt * 0.33f;
-            this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + entityW * static_cast<int>(CurrentFrame), top_sprite_posY, -entityW, top_entityH));
-            this->sprite.setTextureRect(sf::IntRect(sprite_posX + entityW * static_cast<int>(CurrentFrame), sprite_posY, -entityW, entityH));
+            this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + spriteW * static_cast<int>(CurrentFrame), top_sprite_posY, -spriteW, top_spriteH));
+            this->sprite.setTextureRect(sf::IntRect(sprite_posX + spriteW * static_cast<int>(CurrentFrame), sprite_posY, -spriteW, spriteH));
         }
     }
     break;
     case stay_right:
     {
-        setEntitySpriteCoords(1, 664, 1, 644);
-        setEntitySpriteSize(38, 17, 19);
+        setSpriteCoords(1, 664);
+        setSpriteSize(38, 17);
+        setTopSpriteCoords(1, 644);
+        setTopSpriteSize(38, 19);
         CurrentFrame += anim_speed * dt * 0.33f;
         if (CurrentFrame > 4)
             CurrentFrame = 0;
-        this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + entityW * static_cast<int>(CurrentFrame), top_sprite_posY, entityW, top_entityH));
-        this->sprite.setTextureRect(sf::IntRect(sprite_posX + entityW * static_cast<int>(CurrentFrame), sprite_posY, entityW, entityH));
+        this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + spriteW * static_cast<int>(CurrentFrame), top_sprite_posY, spriteW, top_spriteH));
+        this->sprite.setTextureRect(sf::IntRect(sprite_posX + spriteW * static_cast<int>(CurrentFrame), sprite_posY, spriteW, spriteH));
     }
     break;
     case stay_left:
     {
-        setEntitySpriteCoords(1, 664, 1, 644);
-        setEntitySpriteSize(38, 17, 19);
+        setSpriteCoords(1, 664);
+        setSpriteSize(38, 17);
+        setTopSpriteCoords(1, 644);
+        setTopSpriteSize(38, 19);
         CurrentFrame += anim_speed * dt * 0.33f;
         if (CurrentFrame > 5)
             CurrentFrame = 1;
-        this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + entityW * static_cast<int>(CurrentFrame), top_sprite_posY, -entityW, top_entityH));
-        this->sprite.setTextureRect(sf::IntRect(sprite_posX + entityW * static_cast<int>(CurrentFrame), sprite_posY, -entityW, entityH));
+        this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + spriteW * static_cast<int>(CurrentFrame), top_sprite_posY, -spriteW, top_spriteH));
+        this->sprite.setTextureRect(sf::IntRect(sprite_posX + spriteW * static_cast<int>(CurrentFrame), sprite_posY, -spriteW, spriteH));
     }
     break;
     }

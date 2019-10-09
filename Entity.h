@@ -13,9 +13,8 @@ class Entity
 {
 private:
 protected:
-    float boostX = 0.0f, boostY = 0.0f;                             // ускорение по координатам (напр. прижок)
     float posX = 0.0f, posY = 0.0f;                                 // текущая позиция обьекта
-    int entityW = 0, entityH = 0, sprite_posX = 0, sprite_posY = 0; // высота,ширина, здоровье обьекта, координаты спрайта по x, по y
+    int spriteW = 0, spriteH = 0, sprite_posX = 0, sprite_posY = 0; // высота,ширина, координаты спрайта по x, по y
     bool life = 1, isMove = 0, onGround = 0, sitting = 0;           // доп состояния
     sf::Texture texture;
     sf::Sprite sprite;
@@ -24,15 +23,15 @@ protected:
 public:
     // явное отключение конструктора по умолчанию
     Entity() = delete;
-    Entity(float posX, float posY, sf::Image &image, sf::String name);
+    Entity(const float &posX, const float &posY, sf::Image &image, sf::String name);
     virtual ~Entity();
-    
-    virtual void setPosX(float posX);
-    virtual void setPosY(float posY);
-    virtual float getPosX() const;
-    virtual float getPosY() const;
-    virtual void setMove(bool isMove);
-    virtual void move(const float boostX, const float boostY, const float &dt) = 0;
+
+    virtual void setPosX(const float &posX);
+    virtual void setPosY(const float &posY);
+    virtual const float &getPosX() const;
+    virtual const float &getPosY() const;
+    virtual void setMove(const bool &isMove);
+    //virtual void move(const float &boostX, const float &boostY, const float &dt) = 0;
     virtual void update(const float &dt) = 0;
     virtual void setPosition() = 0;
     virtual void render(sf::RenderTarget *target) = 0;

@@ -12,19 +12,19 @@ private:
     unsigned short dmg;
     unsigned short range;
 
-protected:
 public:
     Weapon() = delete;
     Weapon(const std::string &name, const unsigned short &dmg, const unsigned short &range);
     virtual ~Weapon() = 0;
 
+    // потом лучше сделать доп абстракцию дальнобойного оружия
     //virtual const std::list<Bullet::Bullet *> &getBulletList() const = 0;
 
     virtual const std::string &getName() const;
     virtual const unsigned short &getDmg() const;
     virtual const unsigned short &getRange() const;
-    virtual void shootLeft(const unsigned short &posX, const unsigned short &posY, const float &dt) = 0;
-    virtual void shootRight(const unsigned short &posX, const unsigned short &posY, const float &dt) = 0;
+    virtual bool shootLeft(const unsigned short &posX, const unsigned short &posY, const float &dt) = 0;
+    virtual bool shootRight(const unsigned short &posX, const unsigned short &posY, const float &dt) = 0;
     virtual void update(const float &dt) = 0;
     virtual void render(sf::RenderTarget *target) = 0;
 };
