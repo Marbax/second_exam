@@ -46,25 +46,6 @@ void Character::setOnGround(const bool &b) { this->onGround = b; }
 
 const bool &Character::isOnGround() const { return this->onGround; }
 
-// задает позицию спрайтов
-void Character::setPosition()
-{
-
-    if (this->sitting)
-    {
-        this->sprite.setPosition(posX, posY);
-        this->sprite.move(0, 10);
-    }
-    else if (this->state == stay_left || this->state == stay_right)
-    {
-        this->sprite.setPosition(posX, posY);
-    }
-    else
-    {
-        this->sprite.setPosition(posX, posY);
-    }
-}
-
 // задает координаты спрайта(x , y)
 void Character::setSpriteCoords(const int &sprite_posX, const int &sprite_posY)
 {
@@ -250,31 +231,41 @@ void Character::atack(const float &dt)
     } 
 */
 
-/* 
+void Character::movingAnimation(const bool &right, const unsigned short &frame_limit)
+{
+}
+
+void Character::frameChange(const bool &right)
+{
+    if (right)
+        this->sprite.setTextureRect(sf::IntRect(sprite_posX + spriteW * static_cast<int>(CurrentFrame), sprite_posY, spriteW, spriteH));
+
+    else
+        this->sprite.setTextureRect(sf::IntRect(sprite_posX + spriteW * static_cast<int>(CurrentFrame), sprite_posY, -spriteW, spriteH));
+}
+
 void Character::updateAnimation(const float &dt)
 {
     switch (state)
     {
     case moving_right:
     {
-        setSpriteCoords(0, 618, 0, 582);
-        setSpriteSize(39, 19, 29);
+        setSpriteCoords(0, 618);
+        setSpriteSize(39, 19);
         CurrentFrame += anim_speed * dt;
         if (CurrentFrame > 12)
             CurrentFrame = 0;
-        this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + spriteW * static_cast<int>(CurrentFrame), top_sprite_posY, spriteW, top_spriteH));
-        this->sprite.setTextureRect(sf::IntRect(sprite_posX + spriteW * static_cast<int>(CurrentFrame), sprite_posY, spriteW, spriteH));
+        frameChange(true);
     }
     break;
     case moving_left:
     {
-        setSpriteCoords(0, 618, 0, 582);
-        setSpriteSize(39, 19, 29);
+        setSpriteCoords(0, 618);
+        setSpriteSize(39, 19);
         CurrentFrame += anim_speed * dt;
         if (CurrentFrame > 13)
             CurrentFrame = 1;
-        this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + spriteW * static_cast<int>(CurrentFrame), top_sprite_posY, -spriteW, top_spriteH));
-        this->sprite.setTextureRect(sf::IntRect(sprite_posX + spriteW * static_cast<int>(CurrentFrame), sprite_posY, -spriteW, spriteH));
+        frameChange(false);
     }
     break;
     case down_right:
@@ -284,11 +275,10 @@ void Character::updateAnimation(const float &dt)
             if (CurrentFrame > 4)
                 CurrentFrame = 0;
 
-            setSpriteCoords(119, 880, 119, 860);
-            setSpriteSize(41, 7, 20);
+            setSpriteCoords(0, 618);
+            setSpriteSize(39, 19);
             CurrentFrame += anim_speed * dt * 0.22f;
-            this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + spriteW * static_cast<int>(CurrentFrame), top_sprite_posY, spriteW, top_spriteH));
-            this->sprite.setTextureRect(sf::IntRect(sprite_posX + spriteW * static_cast<int>(CurrentFrame), sprite_posY, spriteW, spriteH));
+            frameChange(true);
         }
         else
         {
@@ -298,11 +288,10 @@ void Character::updateAnimation(const float &dt)
                 sitting = true;
             }
 
-            setSpriteCoords(1, 868, 1, 848);
-            setSpriteSize(38, 20, 20);
+            setSpriteCoords(0, 618);
+            setSpriteSize(39, 19);
             CurrentFrame += anim_speed * dt * 0.33f;
-            this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + spriteW * static_cast<int>(CurrentFrame), top_sprite_posY, spriteW, top_spriteH));
-            this->sprite.setTextureRect(sf::IntRect(sprite_posX + spriteW * static_cast<int>(CurrentFrame), sprite_posY, spriteW, spriteH));
+            frameChange(true);
         }
     }
     break;
@@ -313,11 +302,10 @@ void Character::updateAnimation(const float &dt)
             if (CurrentFrame > 5)
                 CurrentFrame = 1;
 
-            setSpriteCoords(119, 880, 119, 860);
-            setSpriteSize(40, 7, 20);
+            setSpriteCoords(0, 618);
+            setSpriteSize(39, 19);
             CurrentFrame += anim_speed * dt * 0.22f;
-            this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + spriteW * static_cast<int>(CurrentFrame), top_sprite_posY, -spriteW, top_spriteH));
-            this->sprite.setTextureRect(sf::IntRect(sprite_posX + spriteW * static_cast<int>(CurrentFrame), sprite_posY, -spriteW, spriteH));
+            frameChange(false);
         }
         else
         {
@@ -327,34 +315,31 @@ void Character::updateAnimation(const float &dt)
                 sitting = true;
             }
 
-            setSpriteCoords(1, 868, 1, 848);
-            setSpriteSize(38, 20, 20);
+            setSpriteCoords(0, 618);
+            setSpriteSize(39, 19);
             CurrentFrame += anim_speed * dt * 0.33f;
-            this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + spriteW * static_cast<int>(CurrentFrame), top_sprite_posY, -spriteW, top_spriteH));
-            this->sprite.setTextureRect(sf::IntRect(sprite_posX + spriteW * static_cast<int>(CurrentFrame), sprite_posY, -spriteW, spriteH));
+            frameChange(false);
         }
     }
     break;
     case stay_right:
     {
-        setSpriteCoords(1, 664, 1, 644);
-        setSpriteSize(38, 17, 19);
+        setSpriteCoords(0, 618);
+        setSpriteSize(39, 19);
         CurrentFrame += anim_speed * dt * 0.33f;
         if (CurrentFrame > 4)
             CurrentFrame = 0;
-        this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + spriteW * static_cast<int>(CurrentFrame), top_sprite_posY, spriteW, top_spriteH));
-        this->sprite.setTextureRect(sf::IntRect(sprite_posX + spriteW * static_cast<int>(CurrentFrame), sprite_posY, spriteW, spriteH));
+        frameChange(true);
     }
     break;
     case stay_left:
     {
-        setSpriteCoords(1, 664, 1, 644);
-        setSpriteSize(38, 17, 19);
+        setSpriteCoords(0, 618);
+        setSpriteSize(39, 19);
         CurrentFrame += anim_speed * dt * 0.33f;
         if (CurrentFrame > 5)
             CurrentFrame = 1;
-        this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + spriteW * static_cast<int>(CurrentFrame), top_sprite_posY, -spriteW, top_spriteH));
-        this->sprite.setTextureRect(sf::IntRect(sprite_posX + spriteW * static_cast<int>(CurrentFrame), sprite_posY, -spriteW, spriteH));
+        frameChange(false);
     }
     break;
     }
@@ -373,7 +358,7 @@ void Character::updateAnimation(const float &dt)
         }
     }
 }
- */
+
 void Character::update(const float &dt)
 {
 
@@ -381,7 +366,8 @@ void Character::update(const float &dt)
     updateJumps(dt);
     updateAnimation(dt);
     setPosition();
-    this->weapon->update(dt);
+    if (weapon)
+        this->weapon->update(dt);
 }
 
 void Character::render(sf::RenderTarget *target)

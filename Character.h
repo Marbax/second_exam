@@ -42,7 +42,7 @@ public:
     virtual const bool &isOnGround() const;
 
     // передвижение спрайта(текстуры)
-    void setPosition() override;
+    virtual void setPosition() = 0;
 
     // задает координаты спрайта(x , y)
     virtual void setSpriteCoords(const int &sprite_posX, const int &sprite_posY);
@@ -61,8 +61,12 @@ public:
 
     // void control(const float &dt);
 
+    virtual void movingAnimation(const bool &right, const unsigned short &frame_limit);
+
+    virtual void frameChange(const bool &right);
+
     // обновление анимации
-    virtual void updateAnimation(const float &dt) = 0;
+    virtual void updateAnimation(const float &dt);
 
     // обновление компонентов
     void update(const float &dt) override;

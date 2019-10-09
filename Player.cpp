@@ -25,7 +25,7 @@ void Player::initSprite()
     setSpriteCoords(0, 618);
     setSpriteSize(39, 19);
     this->sprite.setTextureRect(sf::IntRect(sprite_posX, sprite_posY, spriteW, spriteH));
-    sprite.setOrigin(spriteW / 2, 0); // установка середины обьекта
+    sprite.setOrigin(spriteW / 2, 0);
 }
 
 void Player::initTopSprite()
@@ -33,7 +33,7 @@ void Player::initTopSprite()
     setTopSpriteCoords(0, 582);
     setTopSpriteSize(39, 29);
     spriteTop.setTexture(texture);
-    spriteTop.setOrigin(top_spriteW / 2, top_spriteH); // установка середины обьекта
+    spriteTop.setOrigin(top_spriteW / 2, top_spriteH);
     spriteTop.setTextureRect(sf::IntRect(top_sprite_posX, top_sprite_posY, top_spriteW, top_spriteH));
 }
 
@@ -113,6 +113,14 @@ void Player::atack(const float &dt)
         weapon->shootRight(this->spriteTop.getGlobalBounds().left + this->spriteTop.getGlobalBounds().width, this->spriteTop.getGlobalBounds().top + this->spriteTop.getGlobalBounds().height * 0.75f, dt);
 }
 
+void Player::topFrameChange(const bool &right)
+{
+    if (right)
+        this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + spriteW * static_cast<int>(CurrentFrame), top_sprite_posY, spriteW, top_spriteH));
+    else
+        this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + spriteW * static_cast<int>(CurrentFrame), top_sprite_posY, -spriteW, top_spriteH));
+}
+
 void Player::updateAnimation(const float &dt)
 {
     switch (state)
@@ -126,8 +134,8 @@ void Player::updateAnimation(const float &dt)
         CurrentFrame += anim_speed * dt;
         if (CurrentFrame > 12)
             CurrentFrame = 0;
-        this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + spriteW * static_cast<int>(CurrentFrame), top_sprite_posY, spriteW, top_spriteH));
-        this->sprite.setTextureRect(sf::IntRect(sprite_posX + spriteW * static_cast<int>(CurrentFrame), sprite_posY, spriteW, spriteH));
+        frameChange(true);
+        topFrameChange(true);
     }
     break;
     case moving_left:
@@ -139,8 +147,8 @@ void Player::updateAnimation(const float &dt)
         CurrentFrame += anim_speed * dt;
         if (CurrentFrame > 13)
             CurrentFrame = 1;
-        this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + spriteW * static_cast<int>(CurrentFrame), top_sprite_posY, -spriteW, top_spriteH));
-        this->sprite.setTextureRect(sf::IntRect(sprite_posX + spriteW * static_cast<int>(CurrentFrame), sprite_posY, -spriteW, spriteH));
+        frameChange(false);
+        topFrameChange(false);
     }
     break;
     case down_right:
@@ -155,8 +163,8 @@ void Player::updateAnimation(const float &dt)
             setTopSpriteCoords(119, 860);
             setTopSpriteSize(41, 20);
             CurrentFrame += anim_speed * dt * 0.22f;
-            this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + spriteW * static_cast<int>(CurrentFrame), top_sprite_posY, spriteW, top_spriteH));
-            this->sprite.setTextureRect(sf::IntRect(sprite_posX + spriteW * static_cast<int>(CurrentFrame), sprite_posY, spriteW, spriteH));
+            frameChange(true);
+            topFrameChange(true);
         }
         else
         {
@@ -171,8 +179,8 @@ void Player::updateAnimation(const float &dt)
             setTopSpriteCoords(1, 848);
             setTopSpriteSize(38, 20);
             CurrentFrame += anim_speed * dt * 0.33f;
-            this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + spriteW * static_cast<int>(CurrentFrame), top_sprite_posY, spriteW, top_spriteH));
-            this->sprite.setTextureRect(sf::IntRect(sprite_posX + spriteW * static_cast<int>(CurrentFrame), sprite_posY, spriteW, spriteH));
+            frameChange(true);
+            topFrameChange(true);
         }
     }
     break;
@@ -188,8 +196,8 @@ void Player::updateAnimation(const float &dt)
             setTopSpriteCoords(119, 860);
             setTopSpriteSize(41, 20);
             CurrentFrame += anim_speed * dt * 0.22f;
-            this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + spriteW * static_cast<int>(CurrentFrame), top_sprite_posY, -spriteW, top_spriteH));
-            this->sprite.setTextureRect(sf::IntRect(sprite_posX + spriteW * static_cast<int>(CurrentFrame), sprite_posY, -spriteW, spriteH));
+            frameChange(false);
+            topFrameChange(false);
         }
         else
         {
@@ -204,8 +212,8 @@ void Player::updateAnimation(const float &dt)
             setTopSpriteCoords(1, 848);
             setTopSpriteSize(38, 20);
             CurrentFrame += anim_speed * dt * 0.33f;
-            this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + spriteW * static_cast<int>(CurrentFrame), top_sprite_posY, -spriteW, top_spriteH));
-            this->sprite.setTextureRect(sf::IntRect(sprite_posX + spriteW * static_cast<int>(CurrentFrame), sprite_posY, -spriteW, spriteH));
+            frameChange(false);
+            topFrameChange(false);
         }
     }
     break;
@@ -218,8 +226,8 @@ void Player::updateAnimation(const float &dt)
         CurrentFrame += anim_speed * dt * 0.33f;
         if (CurrentFrame > 4)
             CurrentFrame = 0;
-        this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + spriteW * static_cast<int>(CurrentFrame), top_sprite_posY, spriteW, top_spriteH));
-        this->sprite.setTextureRect(sf::IntRect(sprite_posX + spriteW * static_cast<int>(CurrentFrame), sprite_posY, spriteW, spriteH));
+        frameChange(true);
+        topFrameChange(true);
     }
     break;
     case stay_left:
@@ -231,8 +239,8 @@ void Player::updateAnimation(const float &dt)
         CurrentFrame += anim_speed * dt * 0.33f;
         if (CurrentFrame > 5)
             CurrentFrame = 1;
-        this->spriteTop.setTextureRect(sf::IntRect(top_sprite_posX + spriteW * static_cast<int>(CurrentFrame), top_sprite_posY, -spriteW, top_spriteH));
-        this->sprite.setTextureRect(sf::IntRect(sprite_posX + spriteW * static_cast<int>(CurrentFrame), sprite_posY, -spriteW, spriteH));
+        frameChange(false);
+        topFrameChange(false);
     }
     break;
     }

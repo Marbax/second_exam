@@ -37,6 +37,8 @@ public:
     // включение атаки (состояние)
     void atack(const float &dt) override;
 
+    void topFrameChange(const bool &right);
+
     // обновление анимации
     void updateAnimation(const float &dt) override;
 
