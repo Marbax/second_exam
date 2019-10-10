@@ -40,6 +40,21 @@ Character::~Character()
 //--------------------------------------------Methods------------------------------------------------
 //---------------------------------------------------------------------------------------------------
 
+// задает позицию спрайтов
+void Character::setPosition()
+{
+    this->sprite.setPosition(posX, posY);
+}
+
+void Character::setMaxHealth(const unsigned short &max_hp) { this->health = max_hp; }
+
+void Character::damage(const unsigned short &dmg)
+{
+    if (this->health < 0)
+        this->life = false;
+    this->health -= dmg;
+}
+
 Pistol &Character::getWeapon() { return *this->weapon; }
 
 void Character::setOnGround(const bool &b) { this->onGround = b; }
@@ -243,7 +258,7 @@ void Character::frameChange(const bool &right)
     else
         this->sprite.setTextureRect(sf::IntRect(sprite_posX + spriteW * static_cast<int>(CurrentFrame), sprite_posY, -spriteW, spriteH));
 }
-
+/* 
 void Character::updateAnimation(const float &dt)
 {
     switch (state)
@@ -358,7 +373,7 @@ void Character::updateAnimation(const float &dt)
         }
     }
 }
-
+ */
 void Character::update(const float &dt)
 {
 

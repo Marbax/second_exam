@@ -17,6 +17,8 @@ Entity::~Entity() {}
 //--------------------------------------------Methods------------------------------------------------
 //---------------------------------------------------------------------------------------------------
 
+sf::FloatRect Entity::getSpriteRect() { return this->sprite.getGlobalBounds(); }
+
 void Entity::setPosX(const float &posX) { this->posX = posX; }
 void Entity::setPosY(const float &posY) { this->posY = posY; }
 const float &Entity::getPosX() const { return this->posX; }

@@ -35,6 +35,9 @@ void GameState::initImages() noexcept(false)
 	images["TARMA_TEXTURE"].createMaskFromColor(sf::Color(27, 73, 101));  // убираем фон спрайту
 																		  //(полоска в анимации сидения ,которую я не смог победить))
 
+	if (!this->images["ARABIAN"].loadFromFile(R"(img/EnemyArabian.png)"))
+		throw std::system_error(errno, std::system_category(), "Failed to open img/EnemyArabian.png");
+
 	if (!this->images["BKG_LVL1"].loadFromFile(R"(./img/bkg_lvl1.png)"))
 		throw std::system_error(errno, std::system_category(), "Failed to open ./img/bkg_lvl1.png");
 }
@@ -60,6 +63,11 @@ void GameState::initLvl() noexcept(false)
 	terrain.push_back(sf::FloatRect(2250.f, 0.f, 20.f, 240.f));
 
 	terrain.push_back(sf::FloatRect(3814.f, 0.f, 20.f, 240.f));
+}
+
+void GameState::initEnemies()
+{
+	this->arab = new Arabian(this->terrain.at(0).left + 200, this->terrain.at(0).top - this->terrain.at(0).height - 22, this->images.at("ARABIAN"));
 }
 
 void GameState::initMusic() noexcept(false)
@@ -93,6 +101,7 @@ GameState::GameState(sf::RenderWindow *window, std::map<std::string, int> *suppo
 		this->initLvl();
 		this->initPlayers();
 		this->initView();
+		this->initEnemies();
 	}
 	catch (const std::system_error &ex)
 	{
@@ -121,6 +130,7 @@ void GameState::checkCollisions(const float &dt)
 {
 	for (size_t i = 0; i < terrain.size(); i++)
 	{
+		//player
 		if (this->player->getRect().intersects(this->terrain[i]))
 		{
 			if ((this->player->getPosY() >= this->terrain[i].top - this->terrain[i].height) && (this->player->getPosY() <= this->terrain[i].top - this->terrain[i].height * 0.5f))
@@ -137,11 +147,29 @@ void GameState::checkCollisions(const float &dt)
 				this->player->setPosX(this->terrain[i].left - this->terrain[i].width);
 			}
 		}
+		//bullets
 		for (const auto it : this->player->getWeapon().getBulletList())
 		{
 			if (terrain[i].contains(it->getBulletPosition()))
 			{
 				it->setAlive(false);
+			}
+		}
+		//arab
+		if (this->arab->getSpriteRect().intersects(this->terrain[i]))
+		{
+			if ((this->arab->getPosY() >= this->terrain[i].top - this->terrain[i].height) && (this->arab->getPosY() <= this->terrain[i].top - this->terrain[i].height * 0.5f))
+			{
+				this->arab->setOnGround(true);
+				this->arab->setPosY(this->terrain[i].top - this->terrain[i].height - 2);
+			}
+			if ((this->arab->getPosX() <= this->terrain[i].left) && (this->arab->getPosX() >= this->terrain[i].left - this->terrain[i].width * 0.5f))
+			{
+				this->arab->setPosX(this->terrain[i].left);
+			}
+			if ((this->arab->getPosX() >= this->terrain[i].left - this->terrain[i].width) && (this->arab->getPosX() <= this->terrain[i].left - this->terrain[i].width * 0.5f))
+			{
+				this->arab->setPosX(this->terrain[i].left - this->terrain[i].width);
 			}
 		}
 	}
@@ -223,6 +251,9 @@ void GameState::update(const float &dt)
 	this->updateMusic();
 
 	this->player->update(dt);
+
+	arab->update(dt);
+
 	this->updateView();
 
 	//std::cout << dt << "\nposX= " << this->player->getPosX() << " posY= " << this->player->getPosY() << std::endl;
@@ -234,4 +265,6 @@ void GameState::render(sf::RenderTarget *target)
 		target = this->window;
 	target->draw(sBkg);
 	this->player->render(target);
+
+	arab->render(target);
 }

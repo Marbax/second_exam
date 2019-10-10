@@ -26,6 +26,7 @@ public:
     Entity(const float &posX, const float &posY, sf::Image &image, sf::String name);
     virtual ~Entity();
 
+    virtual sf::FloatRect getSpriteRect();
     virtual void setPosX(const float &posX);
     virtual void setPosY(const float &posY);
     virtual const float &getPosX() const;

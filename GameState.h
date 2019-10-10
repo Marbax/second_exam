@@ -2,10 +2,12 @@
 #define GAMESTATE_H
 #include "State.h"
 #include "Player.h"
+#include "Arabian.h"
 
 class GameState : public State
 {
 private:
+	Arabian *arab;
 	Player *player = nullptr;
 	sf::Texture tBkg;
 	sf::Sprite sBkg;
@@ -20,6 +22,8 @@ private:
 	void initPlayers();
 	// создание фона
 	void initLvl();
+	// добавление врагов
+	void initEnemies();
 	// инициализация фоновой музыки
 	void initMusic() override;
 	// инициализация камеры

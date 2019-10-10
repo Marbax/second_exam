@@ -35,6 +35,10 @@ public:
 
     virtual ~Character() = 0;
 
+    virtual void setMaxHealth(const unsigned short &max_hp);
+
+    virtual void damage(const unsigned short &dmg);
+
     virtual Pistol &getWeapon();
 
     virtual void setOnGround(const bool &b);
@@ -42,7 +46,7 @@ public:
     virtual const bool &isOnGround() const;
 
     // передвижение спрайта(текстуры)
-    virtual void setPosition() = 0;
+    virtual void setPosition();
 
     // задает координаты спрайта(x , y)
     virtual void setSpriteCoords(const int &sprite_posX, const int &sprite_posY);
@@ -66,7 +70,7 @@ public:
     virtual void frameChange(const bool &right);
 
     // обновление анимации
-    virtual void updateAnimation(const float &dt);
+    virtual void updateAnimation(const float &dt) = 0;
 
     // обновление компонентов
     void update(const float &dt) override;
